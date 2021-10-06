@@ -5,14 +5,13 @@
 const { model, Schema } = require('mongoose');
 
 const SampleSchema = new Schema({
+    // Model Required fields
     id: {
         type: Number,
         required: true,
         unique: true,
         default: 0,
     },
-
-    // Model Required fields
     isActive: {
         type: Boolean,
         required: true,
@@ -38,6 +37,7 @@ const SampleSchema = new Schema({
         required: true,
         default: () => new Date(),
     },
+    // Custom Fields
 });
 
 model('Sample', SampleSchema);

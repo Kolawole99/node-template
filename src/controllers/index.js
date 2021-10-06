@@ -1,6 +1,7 @@
 /**
  * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
  * */
+const { NODE_ENV } = process.env;
 const mongoose = require('mongoose');
 
 class Controller {
@@ -24,7 +25,8 @@ class Controller {
     }
 
     static processError(error) {
-        return { ...Controller.jsonize({ failed: true, error: `Controller ${error}` }) };
+        const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${error}` : error;
+        return { ...Controller.jsonize({ failed: true, error: errorMessage }) };
     }
 
     async createRecord(data) {

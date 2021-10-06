@@ -2,12 +2,12 @@
  * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
  * */
 
-require('dotenv').config();
+const { APP_DB_URI, NODE_ENV } = process.env;
+
 const glob = require('glob');
 const { resolve } = require('path');
 const mongoose = require('mongoose');
-
-const { APP_DB_URI } = process.env;
+const { Logger } = require('../utilities/logger');
 
 module.exports.connect = () => {
     try {
@@ -20,14 +20,21 @@ module.exports.connect = () => {
             },
             (err, data) => {
                 if (err) {
-                    console.log('Could not connect to database');
+                    if (NODE_ENV !== 'DEVELOPMENT') {
+                        Logger.error(`[Database Connection Error] ${err}`);
+                    }
+                    console.log('🔴 Database connection failed.');
                     return;
                 }
-                if (data) console.log('Database connection established.');
+                if (data) console.log('🟢 Database connection successful.');
             }
         );
     } catch (e) {
-        console.log(`DB Error: ${e.message}`);
+        if (NODE_ENV === 'DEVELOPMENT') {
+            console.log(`DB Error: ${e.message}`);
+        } else {
+            Logger.error(`[DB Error: ] ${e.message}`);
+        }
     }
 };
 

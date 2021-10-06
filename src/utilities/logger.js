@@ -1,14 +1,13 @@
 /**
  * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
  * */
+const { NODE_ENV } = process.env;
+
 const { createWriteStream } = require('fs');
 const { resolve } = require('path');
 
 const morgan = require('morgan');
 const { createLogger, format, transports } = require('winston');
-require('dotenv').config();
-
-const { NODE_ENV } = process.env;
 
 /** MORGAN */
 const devFormat =

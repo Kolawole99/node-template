@@ -34,8 +34,8 @@
     "sinon": "^9.0.2"
   },
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node -r dotenv/config index.js",
+    "dev": "nodemon -r dotenv/config index.js",
     "test": "nyc --reporter=html mocha --recursive -w -c || true"
   },
   "repository": {

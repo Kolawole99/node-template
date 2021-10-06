@@ -1,6 +1,7 @@
 /**
  * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
  * */
+const { NODE_ENV } = process.env;
 const RootService = require('../_root');
 const { buildQuery, buildWildcardOptions } = require('../../utilities/query');
 const { createSchema, updateSchema } = require('../../validators/sample');
@@ -28,10 +29,11 @@ class SampleService extends RootService {
 
             return this.processSingleRead(result);
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] createRecord: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] createRecord: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }
@@ -46,10 +48,11 @@ class SampleService extends RootService {
 
             return this.processSingleRead(result[0]);
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] updateRecordById: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] readRecordById: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }
@@ -64,10 +67,11 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] readRecordsByFilter: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] readRecordsByFilter: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }
@@ -93,10 +97,11 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] readRecordsByWildcard: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] readRecordsByWildcard: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }
@@ -117,10 +122,11 @@ class SampleService extends RootService {
 
             return this.processUpdateResult(result);
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] updateRecordById: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] updateRecordById: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }
@@ -144,10 +150,11 @@ class SampleService extends RootService {
 
             return this.processUpdateResult({ ...data, ...result });
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] updateRecords: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] updateRecords: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }
@@ -162,10 +169,11 @@ class SampleService extends RootService {
 
             return this.processDeleteResult(result);
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] deleteRecordById: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] deleteRecordById: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }
@@ -182,10 +190,11 @@ class SampleService extends RootService {
 
             return this.processDeleteResult({ ...result });
         } catch (e) {
-            const err = this.processFailedResponse(
-                `[${this.serviceName}] deleteRecords: ${e.message}`,
-                500
-            );
+            const errorMessage =
+                NODE_ENV === 'DEVELOPMENT'
+                    ? `[${this.serviceName}] deleteRecords: ${e.message}`
+                    : e.message;
+            const err = this.processFailedResponse(errorMessage, 500);
             return next(err);
         }
     }

@@ -2,8 +2,6 @@
  * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
  * */
 
-require('dotenv').config();
-
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
@@ -13,7 +11,7 @@ const { morgan } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
 const { connect, loadModels } = require('./src/models/_config');
 
-const { APP_PORT } = process.env;
+const { NODE_ENV, APP_PORT, APP_NAME } = process.env;
 
 /** App Initialization */
 const app = express();
@@ -36,5 +34,9 @@ app.use('/', require('./src/routes/_config'));
 
 /** Starting Server */
 app.listen(APP_PORT, () => {
-    console.log(`Server started on port ${APP_PORT}`);
+    if (NODE_ENV === 'DEVELOPMENT') {
+        console.log(`🔥 Development Server is running at http://localhost:${APP_PORT} 👍`);
+    } else {
+        console.log(`😃 ${APP_NAME} is LIVE on port ${APP_PORT}. 👍`);
+    }
 });

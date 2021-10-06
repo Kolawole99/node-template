@@ -2,7 +2,10 @@
  * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
  * */
 
+const { NODE_ENV } = process.env;
+
 const router = require('express').Router();
+const { Logger } = require('../utilities/logger');
 const Controller = require('../controllers/index');
 
 const sampleController = new Controller('Sample');
@@ -45,7 +48,12 @@ try {
             next();
         });
 } catch (e) {
-    console.log(`[Route Error] /sample: ${e.message}`);
+    const currentRoute = '[Route Error] /sample';
+    if (NODE_ENV !== 'DEVELOPMENT') {
+        Logger.error(`${currentRoute}: ${e.message}`);
+    } else {
+        console.log(`${currentRoute}: ${e.message}`);
+    }
 } finally {
     module.exports = router;
 }

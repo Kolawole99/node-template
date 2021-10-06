@@ -1,7 +1,3 @@
-/**
- * This file automatically loads up all event files on start up.
- * */
-
 const glob = require('glob');
 const { resolve } = require('path');
 

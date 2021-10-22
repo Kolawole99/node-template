@@ -1,12 +1,9 @@
-/**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
- * */
-
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
 
+require('./src/utilities/customErrors');
 const { morgan } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
 const { connect, loadModels } = require('./src/models/_config');

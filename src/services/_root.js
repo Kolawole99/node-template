@@ -6,6 +6,22 @@ const appEvent = require('../events/_config');
 const { buildQuery } = require('../utilities/query');
 
 class RootService {
+    formatError(serviceName, error, functionName) {
+        let statusCode;
+        if (error instanceof CustomValidationError) {
+            statusCode = 412;
+        } else if (error instanceof CustomControllerError) {
+            statusCode = 500;
+        }
+
+        const errorMessage =
+            NODE_ENV === 'DEVELOPMENT'
+                ? `[${serviceName}] ${functionName}: ${error.message}`
+                : error.message;
+
+        return { errorMessage, statusCode };
+    }
+
     processFailedResponse(message, code = 400) {
         return {
             error: message,

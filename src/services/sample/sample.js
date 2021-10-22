@@ -29,11 +29,11 @@ class SampleService extends RootService {
 
             return this.processSingleRead(result);
         } catch (e) {
-            const errorMessage =
-                NODE_ENV === 'DEVELOPMENT'
-                    ? `[${this.serviceName}] createRecord: ${e.message}`
-                    : e.message;
-            const err = this.processFailedResponse(errorMessage, 500);
+            const processedError = this.formatError(this.serviceName, e, 'createRecord');
+            const err = this.processFailedResponse(
+                processedError.errorMessage,
+                processedError.statusCode
+            );
             return next(err);
         }
     }

@@ -6,6 +6,11 @@ const appEvent = require('../events/_config');
 const { buildQuery } = require('../utilities/query');
 
 class RootService {
+    filterJOIValidation(message) {
+        const regex = /["]+/g;
+        return message.replace(regex, '');
+    }
+
     formatError(serviceName, error, functionName) {
         let statusCode;
         if (error instanceof CustomValidationError) {

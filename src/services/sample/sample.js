@@ -22,7 +22,7 @@ class SampleService extends RootService {
             delete body.id;
 
             const { error } = createSchema.validate(body);
-            if (error) throw new Error(error);
+            if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
             const result = await this.sampleController.createRecord({ ...body });
             if (result.failed) throw new Error(result.error);
@@ -115,7 +115,7 @@ class SampleService extends RootService {
             if (Object.keys(data).length === 0) throw new Error('Update requires data.');
 
             const { error } = updateSchema.validate(data);
-            if (error) throw new Error(error);
+            if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
             const result = await this.sampleController.updateRecords({ id }, { ...data });
             if (result.failed) throw new Error(result.error);

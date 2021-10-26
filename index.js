@@ -2,6 +2,8 @@ const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
+const expressMongoSanitize = require('express-mongo-sanitize');
+const hpp = require('hpp');
 
 require('./src/utilities/customErrors');
 const { morgan } = require('./src/utilities/logger');
@@ -24,6 +26,8 @@ app.use(compression());
 app.use(helmet());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(expressMongoSanitize());
+app.use(hpp());
 app.use(morgan);
 
 /** Route Middleware */

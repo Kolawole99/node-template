@@ -210,7 +210,4 @@ class Controller {
     }
 }
 
-const models = mongoose.modelNames();
-console.log(models);
-
 module.exports = Controller;

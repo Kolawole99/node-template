@@ -1,7 +1,3 @@
-/**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
- * */
-
 const router = require('express').Router();
 const { handle404, handleError, setupRequest, processResponse } = require('../middlewares/http');
 

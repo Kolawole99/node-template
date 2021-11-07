@@ -1,7 +1,3 @@
-/**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
- * */
-
 const { model, Schema } = require('mongoose');
 
 const SampleSchema = new Schema({

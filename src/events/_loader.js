@@ -1,7 +1,8 @@
-const glob = require('glob');
 const { resolve } = require('path');
 
-module.exports.loadEventSystem = () => {
+const glob = require('glob');
+
+function loadEventSystem() {
     const basePath = resolve(__dirname, '.');
     const files = glob.sync('*.js', { cwd: basePath });
     files.forEach((file) => {
@@ -9,4 +10,6 @@ module.exports.loadEventSystem = () => {
         // eslint-disable-next-line
         require(resolve(basePath, file));
     });
-};
+}
+
+module.exports = { loadEventSystem };

@@ -1,6 +1,3 @@
-/**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
- * */
 const { NODE_ENV } = process.env;
 
 const { createWriteStream } = require('fs');
@@ -22,7 +19,7 @@ const requestLogStream = createWriteStream(resolve(__dirname, '../../logs/reques
     // eslint-disable-next-line object-curly-newline
 });
 
-exports.morgan = morgan(morganFormat, { stream: requestLogStream });
+global.morganRequestMiddleware = morgan(morganFormat, { stream: requestLogStream });
 
 /** WINSTON */
 const { colorize, combine, printf, timestamp } = format;
@@ -46,4 +43,4 @@ const logger = createLogger({
     format: combine(colorize(), timestamp(), logFormat),
 });
 
-exports.logger = logger;
+global.logger = logger;

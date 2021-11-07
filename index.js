@@ -8,16 +8,15 @@ const hpp = require('hpp');
 /** Utilities in the global scope */
 require('./src/utilities/customErrors');
 require('./src/utilities/encryption');
-const { morgan } = require('./src/utilities/logger');
+require('./src/utilities/logger');
+
+/** Non-global Utilities */
 const { loadEventSystem } = require('./src/events/_loader');
 const { connect, loadModels } = require('./src/models/_config');
 
 const { NODE_ENV, APP_PORT, APP_NAME } = process.env;
 
-/** App Initialization */
 const app = express();
-
-/** Database Connection Setup */
 connect();
 loadModels();
 loadEventSystem();
@@ -30,7 +29,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(expressMongoSanitize());
 app.use(hpp());
-app.use(morgan);
+app.use(morganRequestMiddleware);
 
 /** Route Middleware */
 app.use('/', require('./src/routes/_config'));

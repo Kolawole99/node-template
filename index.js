@@ -1,3 +1,7 @@
+/**
+ * @file index.js is the template root file and serves as the application entry-point.
+ */
+
 const { NODE_ENV, APP_PORT, APP_NAME } = process.env;
 
 const expressMongoSanitize = require('express-mongo-sanitize');
@@ -7,12 +11,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const hpp = require('hpp');
 
-/** Global Utilities */
-require('./src/utilities/mailing/sendEmail');
-require('./src/utilities/customErrors');
-require('./src/utilities/encryption');
-require('./src/utilities/logger');
-
 /** Non-global Utilities */
 const { connectToDatabase, loadModels } = require('./src/models/_config');
 const { loadEventSystem } = require('./src/events/_loader');
@@ -21,6 +19,13 @@ const app = express();
 connectToDatabase();
 loadEventSystem();
 loadModels();
+
+/** Global Utilities */
+require('./src/utilities/modelGlobalization');
+require('./src/utilities/mailing/sendEmail');
+require('./src/utilities/customErrors');
+require('./src/utilities/encryption');
+require('./src/utilities/logger');
 
 /** Middleware Applications */
 app.use(express.urlencoded({ limit: '10mb', extended: true }));

@@ -1,6 +1,6 @@
-import { promisify } from 'util';
-import { genSalt, hash, compare } from 'bcrypt';
-import { sign, verify } from 'jsonwebtoken';
+const { promisify } = require('util');
+const { genSalt, hash, compare } = require('bcrypt');
+const { sign, verify } = require('jsonwebtoken');
 
 const { SALT, SIGNATURE } = process.env;
 

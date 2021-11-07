@@ -43,4 +43,4 @@ const logger = createLogger({
     format: combine(colorize(), timestamp(), logFormat),
 });
 
-global.logger = logger;
+global.Logger = logger;

@@ -1,15 +1,14 @@
-/**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
- * */
-
 const { APP_DB_URI, NODE_ENV } = process.env;
 
-const glob = require('glob');
 const { resolve } = require('path');
-const mongoose = require('mongoose');
-const { Logger } = require('../utilities/logger');
 
-module.exports.connect = () => {
+const glob = require('glob');
+const mongoose = require('mongoose');
+
+/**
+ * Mongoose opens a connection to MongoDB using the APP_DB_URI environment variable.
+ */
+function connectToDatabase() {
     try {
         mongoose.connect(
             APP_DB_URI,
@@ -22,8 +21,9 @@ module.exports.connect = () => {
                 if (err) {
                     if (NODE_ENV !== 'DEVELOPMENT') {
                         Logger.error(`[Database Connection Error] ${err}`);
+                    } else {
+                        console.log('🔴 Database connection failed.');
                     }
-                    console.log('🔴 Database connection failed.');
                     return;
                 }
                 if (data) console.log('🟢 Database connection successful.');
@@ -36,9 +36,12 @@ module.exports.connect = () => {
             Logger.error(`[DB Error: ] ${e.message}`);
         }
     }
-};
+}
 
-module.exports.loadModels = () => {
+/**
+ * Recursively loads all model definition files in the models folder into the app.
+ */
+function loadModels() {
     const basePath = resolve(__dirname, '../models/');
     const files = glob.sync('*.js', { cwd: basePath });
     files.forEach((file) => {
@@ -46,4 +49,9 @@ module.exports.loadModels = () => {
         // eslint-disable-next-line
         require(resolve(basePath, file));
     });
+}
+
+module.exports = {
+    connectToDatabase,
+    loadModels,
 };

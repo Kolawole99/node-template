@@ -1,3 +1,5 @@
+const { NODE_ENV, APP_PORT, APP_NAME } = process.env;
+
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
@@ -12,12 +14,10 @@ require('./src/utilities/logger');
 
 /** Non-global Utilities */
 const { loadEventSystem } = require('./src/events/_loader');
-const { connect, loadModels } = require('./src/models/_config');
-
-const { NODE_ENV, APP_PORT, APP_NAME } = process.env;
+const { connectToDatabase, loadModels } = require('./src/models/_config');
 
 const app = express();
-connect();
+connectToDatabase();
 loadModels();
 loadEventSystem();
 

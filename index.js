@@ -5,7 +5,9 @@ const helmet = require('helmet');
 const expressMongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 
+/** Utilities in the global scope */
 require('./src/utilities/customErrors');
+require('./src/utilities/encryption');
 const { morgan } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
 const { connect, loadModels } = require('./src/models/_config');

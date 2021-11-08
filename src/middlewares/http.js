@@ -1,7 +1,7 @@
 /**
  *
  * This handles requests, responses and errors generically from the Express Routing middleware.
- * @module HTTPMiddleware
+ * @module MIDDLEWARE:HTTP
  */
 
 /**

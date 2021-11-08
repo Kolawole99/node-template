@@ -4,6 +4,8 @@
  * @module MIDDLEWARE:HTTP
  */
 
+const { Logger } = require('../utilities/logger');
+
 /**
  *
  * This middle pre-formats, sets all request headers and intercept bad requests.

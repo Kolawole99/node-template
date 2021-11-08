@@ -5,6 +5,8 @@ const { resolve } = require('path');
 const glob = require('glob');
 const mongoose = require('mongoose');
 
+const { Logger } = require('../utilities/logger');
+
 /**
  * Mongoose opens a connection to MongoDB using the APP_DB_URI environment variable.
  */

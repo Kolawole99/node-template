@@ -1,5 +1,7 @@
 const EventEmitter = require('events');
 
+const { Logger } = require('../utilities/logger');
+
 class AppEvent extends EventEmitter {}
 
 const appEvent = new AppEvent();

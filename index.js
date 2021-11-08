@@ -15,6 +15,7 @@ const hpp = require('hpp');
 
 /** Non-global Utilities */
 const { connectToDatabase, loadModels } = require('./src/models/_config');
+const { morganRequestMiddleware } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
 
 const app = express();
@@ -27,7 +28,6 @@ require('./src/utilities/modelGlobalization');
 require('./src/utilities/mailing/sendEmail');
 require('./src/utilities/customErrors');
 require('./src/utilities/encryption');
-require('./src/utilities/logger');
 
 /** Middleware Applications */
 app.use(express.urlencoded({ limit: '10mb', extended: true }));

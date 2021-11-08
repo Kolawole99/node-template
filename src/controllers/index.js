@@ -1,7 +1,7 @@
 /**
  *
  * This is the controller module for the template
- * @module Controller
+ * @module CONTROLLER
  */
 
 const { NODE_ENV } = process.env;

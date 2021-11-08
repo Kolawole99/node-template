@@ -3,9 +3,9 @@ const { buildQuery, buildWildcardOptions } = require('../../utilities/query');
 const { createSchema, updateSchema } = require('../../validators/sample');
 
 class SampleService extends RootService {
-    constructor(sampleController) {
+    constructor() {
         super();
-        this.sampleController = sampleController;
+        this.sampleController = SampleController;
         this.serviceName = 'SampleService';
     }
 

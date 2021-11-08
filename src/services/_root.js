@@ -1,6 +1,7 @@
 /**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
- * */
+ * This is the Super Class that contains the general Service methods
+ * @module RootService
+ */
 
 const appEvent = require('../events/_config');
 const { buildQuery } = require('../utilities/query');

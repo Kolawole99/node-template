@@ -1,5 +1,7 @@
 /**
- * @file index.js is the template root file and serves as the application entry-point.
+ * This serves as the template root file and application entry-point.
+ * It declares the required items into the global scope and runs necessary aspects of the codebase as required.
+ * @module Index
  */
 
 const { NODE_ENV, APP_PORT, APP_NAME } = process.env;

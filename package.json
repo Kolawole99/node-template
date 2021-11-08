@@ -1,8 +1,18 @@
 {
   "name": "node-template",
-  "version": "1.0.0",
-  "description": "Boilerplate for my node applications",
+  "version": "2.0.0",
+  "description": "Boilerplate for our node applications. This templates serves as a guide for synchronization.",
   "main": "index.js",
+  "author": "Oguntuberu Nathan O.",
+  "license": "ISC",
+  "homepage": "https://github.com/noguntuberu/node-template#readme",
+  "bugs": {
+    "url": "https://github.com/noguntuberu/node-template/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noguntuberu/node-template.git"
+  },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "bcrypt": "^5.0.0",
@@ -13,25 +23,34 @@
     "express": "^4.17.1",
     "express-mongo-sanitize": "^2.1.0",
     "glob": "^7.1.6",
-    "helmet": "^3.23.1",
+    "handlebars": "^4.7.7",
+    "helmet": "^4.6.0",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.5",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
+    "node-cron": "^3.0.0",
+    "nodemailer": "^6.7.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/compression": "^1.7.2",
     "@types/cors": "^2.8.12",
-    "@types/helmet": "^4.0.0",
+    "@types/glob": "^7.2.0",
     "@types/hpp": "^0.2.2",
+    "@types/jsonwebtoken": "^8.5.5",
+    "@types/morgan": "^1.9.3",
+    "@types/node-cron": "^3.0.0",
+    "@types/nodemailer": "^6.4.4",
     "chai": "^4.2.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-security": "^1.4.0",
+    "jsdoc": "^3.6.7",
     "mocha": "^8.1.1",
     "nodemon": "^2.0.4",
     "nyc": "^15.1.0",
@@ -40,18 +59,9 @@
     "sinon": "^9.0.2"
   },
   "scripts": {
+    "generate-documentation": "jsdoc -c jsdoc.json",
     "start": "node -r dotenv/config index.js",
     "dev": "nodemon -r dotenv/config index.js",
     "test": "nyc --reporter=html mocha --recursive -w -c || true"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/noguntuberu/node-template.git"
-  },
-  "author": "Oguntuberu Nathan O.",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/noguntuberu/node-template/issues"
-  },
-  "homepage": "https://github.com/noguntuberu/node-template#readme"
+  }
 }

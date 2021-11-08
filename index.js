@@ -37,6 +37,7 @@ app.use(helmet());
 app.use(cors());
 app.use(hpp());
 
+console.log(global)
 /** Route Middleware */
 app.use('/', require('./src/routes/_config'));
 

@@ -23,7 +23,7 @@ const requestLogStream = createWriteStream(resolve(__dirname, '../../logs/reques
     // eslint-disable-next-line object-curly-newline
 });
 
-global.morganRequestMiddleware = morgan(morganFormat, { stream: requestLogStream });
+const morganRequestMiddleware = morgan(morganFormat, { stream: requestLogStream });
 
 /** WINSTON */
 const { colorize, combine, printf, timestamp } = format;
@@ -47,4 +47,4 @@ const logger = createLogger({
     format: combine(colorize(), timestamp(), logFormat),
 });
 
-global.Logger = logger;
+module.exports = { Logger: logger, morganRequestMiddleware };

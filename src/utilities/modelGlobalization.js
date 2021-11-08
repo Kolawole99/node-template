@@ -1,7 +1,7 @@
 /**
  * This module handles the globalization of all the mongoose models.
  * This ensures they are properly instantiated into the Global namespace.
- * @module ModelsControllerGlobalization
+ * @module UTILITY:ModelsControllerGlobalization
  */
 
 const mongoose = require('mongoose');

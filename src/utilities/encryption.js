@@ -1,6 +1,6 @@
 /**
  * This module handles all the Application wide encryption tasks
- * @module EncryptionUtility
+ * @module UTILITY:Encryption
  */
 
 const { promisify } = require('util');

@@ -1,3 +1,7 @@
+/**
+ * @module UTILITY:WinstonLoggerAndMorganRequestMiddleware
+ */
+
 const { NODE_ENV } = process.env;
 
 const { createWriteStream } = require('fs');

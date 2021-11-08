@@ -1,3 +1,8 @@
+/**
+ * This module serves as the utility for all CronJobs in the application
+ * @module UTILITY:CronJob
+ */
+
 const { schedule } = require('node-cron');
 
 function sampleCronJob({ interval, ...otherParameters }) {

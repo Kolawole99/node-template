@@ -4,7 +4,7 @@ const router = require('express').Router();
 const { Logger } = require('../utilities/logger');
 const SampleService = require('../services/sample/sample');
 
-const sampleService = new SampleService(SampleController);
+const sampleService = new SampleService();
 
 try {
     router

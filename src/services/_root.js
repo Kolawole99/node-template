@@ -1,11 +1,23 @@
 /**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
- * */
+ * This is the Super Class that contains the general Service methods
+ * @module SERVICE:Root
+ */
 
 const appEvent = require('../events/_config');
 const { buildQuery } = require('../utilities/query');
 
+/**
+ * This contains service class generic methods
+ * @class
+ */
 class RootService {
+    /**
+     *
+     * Removes all JOI Validator decoration from Error messages
+     * @method
+     * @param {string} message The error.message string thrown from JOI Validation when a property does not match the specification.
+     * @returns {string} Formatted version of JOI message string.
+     */
     filterJOIValidation(message) {
         const regex = /["]+/g;
         return message.replace(regex, '');

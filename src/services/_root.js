@@ -23,7 +23,20 @@ class RootService {
         return message.replace(regex, '');
     }
 
-    formatError(serviceName, error, functionName) {
+    /**
+     * @typedef FormatErrorParameter
+     * @property {string} serviceName The string defining the current service instance
+     * @property {Error} error The error instance thrown
+     * @property {string} functionName The name of the function that calls this method
+     */
+    /**
+     *
+     * These function handles setting the error codes and cleaning up error messages based on the process environment
+     * @method
+     * @param {FormatErrorParameter} destructuredObject
+     * @returns {object} This contains errorMessage and statusCode
+     */
+    formatError({ serviceName, error, functionName }) {
         let statusCode;
         if (error instanceof CustomValidationError) {
             statusCode = 412;
@@ -39,7 +52,22 @@ class RootService {
         return { errorMessage, statusCode };
     }
 
-    processFailedResponse(message, code = 400) {
+    /**
+     *
+     * @typedef ProcessFailedResponseParameter
+     * @property {string} message The error message
+     * @property {number} code The status code
+     */
+
+    /**
+     *
+     * This methods is used to format all Failed responses and is called internally only
+     * @method
+     * @static
+     * @param {ProcessFailedResponseParameter} destructuredObject The instance of the defined param object.
+     * @returns {object} This always has error set to a string and payload to null.
+     */
+    static #processFailedResponse({ message, code = 400 }) {
         return {
             error: message,
             payload: null,
@@ -47,12 +75,29 @@ class RootService {
         };
     }
 
-    processSuccessfulResponse(
+    /**
+     *
+     * @typedef ProcessSuccessfulResponseParameter
+     * @property {object} payload The payload
+     * @property {number} code The status code
+     * @property {boolean} sendRawResponse defines response medium
+     * @property {string} responseType A string defining the response type to return
+     */
+
+    /**
+     *
+     * This methods is used to format all successful responses and is called internally only
+     * @method
+     * @static
+     * @param {ProcessSuccessfulResponseParameter} destructuredObject The instance of the defined param object
+     * @returns {object} This always has error set to null and payload an object.
+     */
+    static #processSuccessfulResponse({
         payload,
         code = 200,
         sendRawResponse = false,
-        responseType = 'application/json'
-    ) {
+        responseType = 'application/json',
+    }) {
         return {
             payload,
             error: null,
@@ -62,7 +107,23 @@ class RootService {
         };
     }
 
-    async handleDatabaseRead(Controller, queryOptions, extraOptions = {}) {
+    /**
+     *
+     * @typedef HandleDatabaseReadParameter
+     * @property {Class} Controller The response from the Controller request to the database
+     * @property {object} queryOptions The response from the Controller request to the database
+     * @property {object} extraOptions A string defining the event to be fired
+     */
+
+    /**
+     *
+     * This methods is used to query the database to read items from the database by a generated query
+     * @method
+     * @async
+     * @param {HandleDatabaseReadParameter} destructuredObject The instance of the defined param object
+     * @returns An the response from the Controller
+     */
+    async handleDatabaseRead({ Controller, queryOptions, extraOptions = {} }) {
         const { count, fieldsToReturn, limit, seekConditions, skip, sortCondition } =
             buildQuery(queryOptions);
 
@@ -77,34 +138,69 @@ class RootService {
         return result;
     }
 
+    /**
+     *
+     * This methods is used to handle the response from every single document read request
+     * @method
+     * @param {object} result The response from the Controller request to the database
+     * @returns An instance of SuccessfulResponse/FailedResponse
+     */
     processSingleRead(result) {
-        if (result && result.id) return this.processSuccessfulResponse(result);
-        return this.processFailedResponse('Resource not found', 404);
+        if (result && result.id) return RootService.#processSuccessfulResponse(result);
+        return RootService.#processFailedResponse('Resource not found', 404);
     }
 
+    /**
+     *
+     * This methods is used to handle the response from every multiple read request
+     * @method
+     * @param {object} result The response from the Controller request to the database
+     * @returns An instance of SuccessfulResponse/FailedResponse
+     */
     processMultipleReadResults(result) {
         if (result && (result.count || result.length >= 0)) {
-            return this.processSuccessfulResponse(result);
+            return RootService.#processSuccessfulResponse(result);
         }
-        return this.processFailedResponse('Resources not found', 404);
+        return RootService.#processFailedResponse('Resources not found', 404);
     }
 
-    processUpdateResult(result, eventName) {
+    /**
+     *
+     * @typedef ProcessUpdateResult
+     * @property {object} result The response from the Controller request to the database
+     * @property {string} eventName A string defining the event to be fired
+     */
+
+    /**
+     *
+     * This methods is used to handle the response from every update request
+     * @method
+     * @param {ProcessUpdateResult} destructuredObject
+     * @returns An instance of SuccessfulResponse/FailedResponse
+     */
+    processUpdateResult({ result, eventName }) {
         if (result && result.ok && result.nModified) {
             if (eventName) {
                 appEvent.emit(eventName, result);
             }
-            return this.processSuccessfulResponse(result);
+            return RootService.#processSuccessfulResponse(result);
         }
         if (result && result.ok && !result.nModified) {
-            return this.processSuccessfulResponse(result, 204);
+            return RootService.#processSuccessfulResponse(result, 204);
         }
-        return this.processFailedResponse('Update failed', 400);
+        return RootService.#processFailedResponse('Update failed', 400);
     }
 
+    /**
+     *
+     * This methods is used to handle the response from every delete request
+     * @method
+     * @param {object} result The response from the controller
+     * @returns An instance of SuccessfulResponse/FailedResponse
+     */
     processDeleteResult(result) {
-        if (result && result.nModified) return this.processSuccessfulResponse(result);
-        return this.processFailedResponse('Deletion failed.', 200);
+        if (result && result.nModified) return RootService.#processSuccessfulResponse(result);
+        return RootService.#processFailedResponse('Deletion failed.', 200);
     }
 }
 

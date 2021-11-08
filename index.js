@@ -17,10 +17,6 @@ const hpp = require('hpp');
 const { connectToDatabase, loadModels } = require('./src/models/_config');
 const { loadEventSystem } = require('./src/events/_loader');
 
-const app = express();
-connectToDatabase();
-loadEventSystem();
-loadModels();
 
 /** Global Utilities */
 require('./src/utilities/modelGlobalization');
@@ -28,6 +24,14 @@ require('./src/utilities/mailing/sendEmail');
 require('./src/utilities/customErrors');
 require('./src/utilities/encryption');
 require('./src/utilities/logger');
+
+
+const app = express();
+connectToDatabase();
+loadEventSystem();
+loadModels();
+
+
 
 /** Middleware Applications */
 app.use(express.urlencoded({ limit: '10mb', extended: true }));

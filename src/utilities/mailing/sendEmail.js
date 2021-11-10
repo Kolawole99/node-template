@@ -1,4 +1,5 @@
 /**
+ *
  * This module handles all the email sending for the Application
  * @module UTILITY:Mailer
  */

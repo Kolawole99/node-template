@@ -46,7 +46,7 @@ function processResponse(request, response, next) {
  * @param {object} response Express response object. Unused in this function.
  * @param {object} next Express next function
  */
-function handle404(...[, , next]) {
+function handle404(request, response, next) {
     const returnData = {
         status: 404,
         error: 'Resource not found',

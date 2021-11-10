@@ -1,3 +1,9 @@
+/**
+ *
+ * This is the entry-point for all Nodejs Events in the application
+ * @module EVENTS
+ */
+
 const EventEmitter = require('events');
 
 const { Logger } = require('../utilities/logger');

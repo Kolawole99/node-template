@@ -8,7 +8,9 @@ const mongoose = require('mongoose');
 const { Logger } = require('../utilities/logger');
 
 /**
+ *
  * Mongoose opens a connection to MongoDB using the APP_DB_URI environment variable.
+ * @function
  */
 function connectToDatabase() {
     try {
@@ -42,7 +44,9 @@ function connectToDatabase() {
 }
 
 /**
+ *
  * Recursively loads all model definition files in the models folder into the app.
+ * @function
  */
 function loadModels() {
     const basePath = resolve(__dirname, '../models/');

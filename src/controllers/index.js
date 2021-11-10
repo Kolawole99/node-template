@@ -63,15 +63,23 @@ class Controller {
     static #mongoErrorMessage({ error }) {
         const { name, code , keyPattern } = error;
       
-  
+       
             if (name === "MongoError" && code && code === 11000) {
                
                 const keys = Object.keys(keyPattern).join(",");
                 return `Entry already exist for ${keys} `;
             
             } else if (name === "ValidationError") {
-                const { type, path } = error.errors[Object.keys(error.errors)[0]].properties;
-                return `Validation failed for field ${path} (${type}) `;
+               
+                if (error.errors[Object.keys(error.errors)[0]].properties) {
+                    const { type, path } = error.errors[Object.keys(error.errors)[0]].properties;
+                    return `Validation failed for field ${path} (${type}) `;
+                } else {
+                    const { kind, value, path } = error.errors[Object.keys(error.errors)[0]];
+                    return `Validation failed for field ${path} (${value}) instead of ${kind} `;
+               }
+                    
+              
             }
      
        
@@ -95,8 +103,7 @@ class Controller {
     static #processError(error) {
        
         const message =  Controller.#mongoErrorMessage({error}) || error.message;
-            console.log("m",message)
-        const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
+                const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
         return Controller.#jsonize({ failed: true, error: errorMessage });
     }
 

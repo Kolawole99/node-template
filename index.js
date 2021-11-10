@@ -41,8 +41,9 @@ app.use(cors());
 app.use(hpp());
 
 
-/** Route Middleware */
-app.use('/', require('./src/routes/_config'));
+    /** Route Middleware */
+    app.use('/', require('./src/routes/_config'));
+
 
 /** Starting Server */
 app.listen(APP_PORT, () => {

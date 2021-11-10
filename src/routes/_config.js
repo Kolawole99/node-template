@@ -13,8 +13,9 @@ router.use(processResponse);
 
 /** Static Routes */
 router.use('/image/:imageName', () => { });
-/** Query Logs */
 
+
+/** Query Logs */
 router.use('/logs', logsRouterHandler);
 
 router.use(handle404);

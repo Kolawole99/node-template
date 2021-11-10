@@ -3,10 +3,14 @@
  */
 
 const { NODE_ENV } = process.env;
-const { createWriteStream , readFileSync} = require('fs');
+const { createWriteStream , readFile} = require('fs');
 const { resolve } = require('path');
 const morgan = require('morgan');
+const { promisify } = require("fs/promises")
 const { createLogger, format, transports } = require('winston');
+const readFiles = require("util").promisify(readFile)
+
+
 
 
 
@@ -56,57 +60,74 @@ class Loggers {
         });
     }
 
-     retrieveLogs({ type = "combined", length = 100, timeFilterRange = null, order = "Head", file = "text" }) {
 
-    // read log file i.e error, request, combined etc
-         const logs = readFileSync(resolve(__dirname, `../../logs/${type}.log`), {
-             encoding: "utf8"
-         });
+    /**
+     * 
+     * @param {object} type, length, timeFilterRange , order, file 
+     * @returns {object|string}
+     */
+  async   retrieveLogs({ type = "combined", length = 100, timeFilterRange = null, order = "Head", file = "text" }) {
+         try {
+
+             //validate inputs
+             
+            
+
+             // read log file i.e error, request, combined etc
+             const logs = await readFiles(resolve(__dirname, `../../logs/${type}.log`), {
+                 encoding: "utf8"
+             });
 
 
 
-    // convert logs from string to array
-    const convertedLogsToArray = (type === "exception") ? logs.split("\r\n") : logs.split("\n")
+             // convert logs from string to array
+             const convertedLogsToArray = (type === "exception") ? logs.split("\r\n") : logs.split("\n")
 
-    //Remove the undefined in the array after split
-    !convertedLogsToArray[convertedLogsToArray.length - 1] && convertedLogsToArray.pop();
+             //Remove the undefined in the array after split
+             !convertedLogsToArray[convertedLogsToArray.length - 1] && convertedLogsToArray.pop();
 
        
-    // clean logs from extras and conveert to  array of  json
-    let jsonizedLogs = convertedLogsToArray.map(Loggers.#clean(type));
+             // clean logs from extras and conveert to  array of  json
+             let jsonizedLogs = convertedLogsToArray.map(Loggers.#clean(type));
 
       
 
-    //filter logs by timestamp
-    if (timeFilterRange) {
-        let [startDate, endDate] = timeFilterRange.split("*");
+             //filter logs by timestamp
+             if (timeFilterRange) {
+                 let [startDate, endDate] = timeFilterRange.split("*");
 
-        startDate = startDate ? Loggers.#parseDate(startDate) : Loggers.#parseDate(new Date());
+                 startDate = startDate ? Loggers.#parseDate(startDate) : Loggers.#parseDate(new Date());
 
-        endDate = endDate ? Loggers.#parseDate(endDate) : Loggers.#parseDate(new Date());
+                 endDate = endDate ? Loggers.#parseDate(endDate) : Loggers.#parseDate(new Date());
 
-        jsonizedLogs = jsonizedLogs.filter((value) => {
+                 jsonizedLogs = jsonizedLogs.filter((value) => {
 
-            const time = new Date(value.timestamp);
+                     const time = new Date(value.timestamp);
 
-            return time > startDate && time < endDate
+                     return time > startDate && time < endDate
 
-        })
-    }
+                 })
+             }
 
-    //get range to display
-    let range = order == "Tail" ? [jsonizedLogs.length - length, jsonizedLogs.length] : [0, length]
+             //get range to display
+             let range = order == "Tail" ? [jsonizedLogs.length - length, jsonizedLogs.length] : [0, length]
 
-    //get range of logs to return 
-    const selectedLogs = jsonizedLogs.splice(...range);
+             //get range of logs to return 
+             const selectedLogs = jsonizedLogs.splice(...range);
 
-    // send json back to the client
-    if (file === "json") {
-        return selectedLogs;
-    }
+             // send json back to the client
+             if (file === "json") {
+                 return selectedLogs;
+             }
 
-    //send strings back to the client
-         return selectedLogs.reduce(Loggers.#formatString(type), ``);
+             //send strings back to the client
+             return selectedLogs.reduce(Loggers.#formatString(type), ``);
+         } catch (e) {
+             if (e.errno === -4058) {
+                 return `${type}.log is not found`
+             }
+             return e;
+         }
 
 }
 

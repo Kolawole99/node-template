@@ -3,23 +3,11 @@ const fs = require("fs")
 const router = require('express').Router();
 const { Logger, retrieveLogs } = require('../utilities/logger');
 
-
-
-
 try {
     router
         .get('/', async (request, response, next) => {
-
-            const { type, length , timeFilterRange , order, file } = request.query;
-
-        
-            try {
-                response.send(retrieveLogs({ type, length, timeFilterRange, order, file }));
-                return;
-          
-            } catch (e) {
-               next(e)
-            }
+                            
+            response.send(await retrieveLogs(request.query));         
         
         })
         

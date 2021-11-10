@@ -18,19 +18,16 @@ const { connectToDatabase, loadModels } = require('./src/models/_config');
 const { morganRequestMiddleware } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
 
+const app = express();
+connectToDatabase();
+loadEventSystem();
+loadModels();
 
 /** Global Utilities */
 require('./src/utilities/modelGlobalization');
 require('./src/utilities/mailing/sendEmail');
 require('./src/utilities/customErrors');
 require('./src/utilities/encryption');
-
-
-const app = express();
-connectToDatabase();
-loadEventSystem();
-loadModels();
-
 
 
 /** Middleware Applications */
@@ -43,7 +40,7 @@ app.use(helmet());
 app.use(cors());
 app.use(hpp());
 
-console.log(global)
+
 /** Route Middleware */
 app.use('/', require('./src/routes/_config'));
 

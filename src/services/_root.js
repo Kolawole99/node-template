@@ -30,12 +30,12 @@ class RootService {
         } else if (error instanceof CustomControllerError) {
             statusCode = 500;
         }
-
-        const errorMessage =
-            NODE_ENV === 'DEVELOPMENT'
-                ? `[${serviceName}] ${functionName}: ${error.message}`
-                : error.message;
-
+      
+            const errorMessage = process.env.NODE_ENV === 'DEVELOPMENT'
+                    ? `[${serviceName}] ${functionName}: ${error.message}`
+                    : error.message;
+     
+       
         return { errorMessage, statusCode };
     }
 

@@ -14,17 +14,23 @@ class SampleService extends RootService {
             const { body } = request;
             const { error } = createSchema.validate(body);
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
-
+          
             const result = await this.sampleController.createRecord({ ...body });
+         
             if (result.failed) throw new CustomControllerError(result.error);
 
             return this.processSingleRead(result);
         } catch (e) {
+           
             let processedError = this.formatError(this.serviceName, e, 'createRecord');
+
+          
             const err = this.processFailedResponse(
                 processedError.errorMessage,
                 processedError.statusCode
             );
+           
+            console.log(err)
             return next(err);
         }
     }

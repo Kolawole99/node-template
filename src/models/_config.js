@@ -15,9 +15,10 @@ function connectToDatabase() {
         mongoose.connect(
             APP_DB_URI,
             {
-                autoIndex: false,
+                autoIndex: true,
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
+                useCreateIndex: true
             },
             (err, data) => {
                 if (err) {

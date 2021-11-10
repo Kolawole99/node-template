@@ -52,7 +52,7 @@ function handle404(...[, , next]) {
         error: 'Resource not found',
         payload: null,
     };
-
+  
     next(returnData);
 }
 
@@ -65,9 +65,9 @@ function handle404(...[, , next]) {
  * @param {object} next Express next function. Unused in this function.
  * @returns {object} Express response object, formatted using the error param.
  */
-function handleError(...[error, , response, ,]) {
+function handleError(error, request, response, next) {
     // Log errors
-    Logger.error(error.error || error.message);
+   Logger.error(error.error || error.message);
 
     // return error
     return response.status(error.status || 500).json({
@@ -76,6 +76,8 @@ function handleError(...[error, , response, ,]) {
         payload: null,
     });
 }
+
+
 
 module.exports = {
     handle404,

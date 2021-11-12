@@ -1,7 +1,13 @@
+# Logs and coverage
+.nyc_output/
+coverage/
+logs/
+
+# Documentation
+docs/
+
+# Project properties file
 .env
 node_modules/
-logs/
-coverage/
-.nyc_output/
 package-lock.json
-docs/
+yarn.lock

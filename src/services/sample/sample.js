@@ -1,7 +1,18 @@
+/**
+ *
+ * This handles the business logic for the Sample Model
+ * @module SERVICE:Sample
+ */
+
 const RootService = require('../_root');
 const { buildQuery, buildWildcardOptions } = require('../../utilities/query');
 const { createSchema, updateSchema } = require('../../validators/sample');
 
+/**
+ *
+ * This is the integration of the Sample model routes with the Sample model controller bridging by holding core business logic.
+ * @class
+ */
 class SampleService extends RootService {
     constructor() {
         super();

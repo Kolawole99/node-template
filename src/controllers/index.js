@@ -1,7 +1,7 @@
 /**
  *
  * This is the controller module for the template
- * @module CONTROLLER
+ * @module Controller
  */
 
 const { NODE_ENV } = process.env;
@@ -53,6 +53,39 @@ class Controller {
         return JSON.parse(JSON.stringify(data));
     }
 
+
+    /**
+     * @static
+     * @private
+     * @param {object} error the mongo error object
+     * @returns {string}   modified error message based on error code
+     */
+    static #mongoErrorMessage({ error }) {
+        const { name, code , keyPattern } = error;
+      
+       
+            if (name === "MongoError" && code && code === 11000) {
+               
+                const keys = Object.keys(keyPattern).join(",");
+                return `Entry already exist for ${keys} `;
+            
+            } else if (name === "ValidationError") {
+               
+                if (error.errors[Object.keys(error.errors)[0]].properties) {
+                    const { type, path } = error.errors[Object.keys(error.errors)[0]].properties;
+                    return `Validation failed for field ${path} (${type}) `;
+                } else {
+                    const { kind, value, path } = error.errors[Object.keys(error.errors)[0]];
+                    return `Validation failed for field ${path} (${value}) instead of ${kind} `;
+               }
+                    
+              
+            }
+     
+       
+    
+    }
+
     /**
      * @typedef {Object} ControllerError
      * @property {boolean} failed - The boolean value showing error. This is always true.
@@ -67,8 +100,10 @@ class Controller {
      * @param {string} message input thrown from the built-in Error class
      * @returns {ControllerError} a JSON formatted instance of controller error
      */
-    static #processError(message) {
-        const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
+    static #processError(error) {
+       
+        const message =  Controller.#mongoErrorMessage({error}) || error.message;
+                const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
         return Controller.#jsonize({ failed: true, error: errorMessage });
     }
 
@@ -89,7 +124,7 @@ class Controller {
 
             return Controller.#jsonize(createdRecord);
         } catch (e) {
-            return Controller.#processError(e.message);
+            return Controller.#processError(e);
         }
     }
 
@@ -147,7 +182,7 @@ class Controller {
 
             return Controller.#jsonize([...result]);
         } catch (e) {
-            return Controller.#processError(e.message);
+            return Controller.#processError(e);
         }
     }
 
@@ -179,7 +214,7 @@ class Controller {
 
             return Controller.#jsonize({ ...result, data });
         } catch (e) {
-            return Controller.#processError(e.message);
+            return Controller.#processError(e);
         }
     }
 
@@ -205,7 +240,7 @@ class Controller {
 
             return Controller.#jsonize(result);
         } catch (e) {
-            return Controller.#processError(e.message);
+            return Controller.#processError(e);
         }
     }
 }

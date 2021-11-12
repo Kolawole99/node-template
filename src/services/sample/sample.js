@@ -20,25 +20,31 @@ class SampleService extends RootService {
         this.serviceName = 'SampleService';
     }
 
-    async createRecord(request, next) {
+    async createRecord({ request, next }) {
         try {
             const { body } = request;
+           
             const { error } = createSchema.validate(body);
-            if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
-
+            // if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
+          
             const result = await this.sampleController.createRecord({ ...body });
+         
             if (result.failed) throw new CustomControllerError(result.error);
-
+   
             return this.processSingleRead(result);
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'createRecord');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+         
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "createRecord"
+            });
+                                
+            return next(processedError);
         }
     }
+
+  
 
     async readRecordById(request, next) {
         try {
@@ -50,12 +56,15 @@ class SampleService extends RootService {
 
             return this.processSingleRead(result[0]);
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'readRecordById');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "readRecordById"
+            });
+
+            return next(processedError);
+          
         }
     }
 
@@ -70,12 +79,14 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'readRecordsByFilter');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "readRecordsByFilter"
+            });
+
+            return next(processedError);
         }
     }
 
@@ -100,12 +111,14 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'readRecordsByWildcard');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "readRecordsByWildcard"
+            });
+
+            return next(processedError);
         }
     }
 
@@ -126,12 +139,14 @@ class SampleService extends RootService {
 
             return this.processUpdateResult(result);
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'updateRecordById');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "updateRecordById"
+            });
+
+            return next(processedError);
         }
     }
 
@@ -155,12 +170,14 @@ class SampleService extends RootService {
 
             return this.processUpdateResult({ ...data, ...result });
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'updateRecords');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "updateRecords"
+            });
+
+            return next(processedError);
         }
     }
 
@@ -174,12 +191,14 @@ class SampleService extends RootService {
 
             return this.processDeleteResult(result);
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'deleteRecordById');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "deleteRecordById"
+            });
+
+            return next(processedError);
         }
     }
 
@@ -196,12 +215,14 @@ class SampleService extends RootService {
 
             return this.processDeleteResult({ ...result });
         } catch (e) {
-            let processedError = this.formatError(this.serviceName, e, 'deleteRecords');
-            const err = this.processFailedResponse(
-                processedError.errorMessage,
-                processedError.statusCode
-            );
-            return next(err);
+
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: "eleteRecords"
+            });
+
+            return next(processedError);
         }
     }
 }

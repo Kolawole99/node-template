@@ -9,7 +9,7 @@ function sampleCronJob({ interval, ...otherParameters }) {
     try {
         schedule(`* */${interval.minute} */${interval.hour} * * *`, async () => {
             // YOUR CODE GOES HERE
-            console.log(otherParameters);
+            // console.log(otherParameters);
         });
     } catch (e) {
         NODE_ENV === 'DEVELOPMENT'
@@ -22,7 +22,7 @@ function justACronJob({ interval, ...otherParameters }) {
     try {
         schedule(`* */${interval.minute} */${interval.hour} * * *`, async () => {
             // YOUR CODE GOES HERE
-            console.log(otherParameters);
+            // console.log(otherParameters);
         });
     } catch (e) {
         NODE_ENV === 'DEVELOPMENT'

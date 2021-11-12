@@ -36,20 +36,20 @@ class RootService {
      * @param {FormatErrorParameter} destructuredObject
      * @returns {object} This contains errorMessage and statusCode
      */
-    formatError({ serviceName, error, functionName }) {
-        let statusCode;
+    formatError({ service, error, functionName }) {
+        let code;
         if (error instanceof CustomValidationError) {
-            statusCode = 412;
+            code = 412;
         } else if (error instanceof CustomControllerError) {
-            statusCode = 500;
+            code  = 500;
         }
-
-        const errorMessage =
-            NODE_ENV === 'DEVELOPMENT'
-                ? `[${serviceName}] ${functionName}: ${error.message}`
-                : error.message;
-
-        return { errorMessage, statusCode };
+      
+         const    message = process.env.NODE_ENV === 'DEVELOPMENT'
+                    ? `[${service}] ${functionName}: ${error.message}`
+                    : error.message;
+     
+       
+        return RootService.#processFailedResponse({ message, code });
     }
 
     /**
@@ -146,7 +146,7 @@ class RootService {
      * @returns An instance of SuccessfulResponse/FailedResponse
      */
     processSingleRead(result) {
-        if (result && result.id) return RootService.#processSuccessfulResponse(result);
+        if (result && result.id) return RootService.#processSuccessfulResponse({ payload: result });
         return RootService.#processFailedResponse('Resource not found', 404);
     }
 

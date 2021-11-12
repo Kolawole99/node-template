@@ -8,6 +8,11 @@ const SampleSchema = new Schema({
         unique: true,
         default: 0,
     },
+    test: {
+        type: Number,
+        required: true,
+        unique: true
+    },
     isActive: {
         type: Boolean,
         required: true,

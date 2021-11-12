@@ -29,6 +29,7 @@ require('./src/utilities/mailing/sendEmail');
 require('./src/utilities/customErrors');
 require('./src/utilities/encryption');
 
+
 /** Middleware Applications */
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(express.json({ limit: '10mb' }));
@@ -39,8 +40,10 @@ app.use(helmet());
 app.use(cors());
 app.use(hpp());
 
-/** Route Middleware */
-app.use('/', require('./src/routes/_config'));
+
+    /** Route Middleware */
+    app.use('/', require('./src/routes/_config'));
+
 
 /** Starting Server */
 app.listen(APP_PORT, () => {

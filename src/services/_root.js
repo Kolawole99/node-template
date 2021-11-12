@@ -41,14 +41,14 @@ class RootService {
         if (error instanceof CustomValidationError) {
             code = 412;
         } else if (error instanceof CustomControllerError) {
-            code  = 500;
+            code = 500;
         }
-      
-         const    message = process.env.NODE_ENV === 'DEVELOPMENT'
-                    ? `[${service}] ${functionName}: ${error.message}`
-                    : error.message;
-     
-       
+
+        const message =
+            process.env.NODE_ENV === 'DEVELOPMENT'
+                ? `[${service}] ${functionName}: ${error.message}`
+                : error.message;
+
         return RootService.#processFailedResponse({ message, code });
     }
 

@@ -20,33 +20,43 @@ class SampleService extends RootService {
         this.serviceName = 'SampleService';
     }
 
+    /**
+     *
+     * @typedef RequestFunctionParameter
+     * @property {object} request Express Request parameter
+     * @property {function} next Express NextFunction parameter
+     */
+
+    /**
+     *
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async createRecord({ request, next }) {
         try {
             const { body } = request;
-           
+
             const { error } = createSchema.validate(body);
-            // if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
-          
+            if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
+
             const result = await this.sampleController.createRecord({ ...body });
-         
             if (result.failed) throw new CustomControllerError(result.error);
-   
+
             return this.processSingleRead(result);
         } catch (e) {
-         
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "createRecord"
+                functionName: 'createRecord',
             });
-                                
+
             return next(processedError);
         }
     }
 
-  
-
-    async readRecordById(request, next) {
+    async readRecordById({ request, next }) {
         try {
             const { id } = request.params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
@@ -56,19 +66,17 @@ class SampleService extends RootService {
 
             return this.processSingleRead(result[0]);
         } catch (e) {
-
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "readRecordById"
+                functionName: 'readRecordById',
             });
 
             return next(processedError);
-          
         }
     }
 
-    async readRecordsByFilter(request, next) {
+    async readRecordsByFilter({ request, next }) {
         try {
             const { query } = request;
             if (Object.keys(query).length === 0)
@@ -79,18 +87,17 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "readRecordsByFilter"
+                functionName: 'readRecordsByFilter',
             });
 
             return next(processedError);
         }
     }
 
-    async readRecordsByWildcard(request, next) {
+    async readRecordsByWildcard({ request, next }) {
         try {
             const { params, query } = request;
             if (!params || !query) throw new CustomValidationError('Invalid key/keyword');
@@ -111,18 +118,17 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "readRecordsByWildcard"
+                functionName: 'readRecordsByWildcard',
             });
 
             return next(processedError);
         }
     }
 
-    async updateRecordById(request, next) {
+    async updateRecordById({ request, next }) {
         try {
             const { id } = request.params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
@@ -139,18 +145,17 @@ class SampleService extends RootService {
 
             return this.processUpdateResult(result);
         } catch (e) {
-
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "updateRecordById"
+                functionName: 'updateRecordById',
             });
 
             return next(processedError);
         }
     }
 
-    async updateRecords(request, next) {
+    async updateRecords({ request, next }) {
         try {
             const { options, data } = request.body;
             if (!options || !data) throw new CustomValidationError('Invalid options/data');
@@ -170,18 +175,17 @@ class SampleService extends RootService {
 
             return this.processUpdateResult({ ...data, ...result });
         } catch (e) {
-
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "updateRecords"
+                functionName: 'updateRecords',
             });
 
             return next(processedError);
         }
     }
 
-    async deleteRecordById(request, next) {
+    async deleteRecordById({ request, next }) {
         try {
             const { id } = request.params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
@@ -191,18 +195,17 @@ class SampleService extends RootService {
 
             return this.processDeleteResult(result);
         } catch (e) {
-
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "deleteRecordById"
+                functionName: 'deleteRecordById',
             });
 
             return next(processedError);
         }
     }
 
-    async deleteRecords(request, next) {
+    async deleteRecords({ request, next }) {
         try {
             const { options } = request.body;
             if (Object.keys(options).length === 0)
@@ -215,11 +218,10 @@ class SampleService extends RootService {
 
             return this.processDeleteResult({ ...result });
         } catch (e) {
-
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
-                functionName: "eleteRecords"
+                functionName: 'deleteRecords',
             });
 
             return next(processedError);

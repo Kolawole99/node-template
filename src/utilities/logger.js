@@ -3,20 +3,14 @@
  */
 
 const { NODE_ENV } = process.env;
-const { createWriteStream , readFile} = require('fs');
+const { createWriteStream, readFile } = require('fs');
 const { resolve } = require('path');
 const morgan = require('morgan');
-const { promisify } = require("fs/promises")
+const { promisify } = require('fs/promises');
 const { createLogger, format, transports } = require('winston');
-const readFiles = require("util").promisify(readFile)
-
-
-
-
-
+const readFiles = require('util').promisify(readFile);
 
 class Loggers {
-
     constructor() {
         this.#init();
     }
@@ -40,14 +34,14 @@ class Loggers {
         /** WINSTON */
         const { colorize, combine, printf, timestamp, json } = format;
 
-         const logTransports = {
+        const logTransports = {
             console: new transports.Console({ level: 'warn' }),
             combinedLog: new transports.File({ level: 'info', filename: 'logs/combined.log' }),
             errorLog: new transports.File({ level: 'error', filename: 'logs/error.log' }),
             exceptionLog: new transports.File({ filename: 'logs/exception.log' }),
         };
 
-      const logFormat = printf(
+        const logFormat = printf(
             // eslint-disable-next-line no-shadow
             ({ level, message, timestamp }) => `[${timestamp} : ${level}] - ${message}`
         );
@@ -60,141 +54,139 @@ class Loggers {
         });
     }
 
-
     /**
-     * 
-     * @param {object} type, length, timeFilterRange , order, file 
+     *
+     * @param {object} type, length, timeFilterRange , order, file
      * @returns {object|string}
      */
-  async   retrieveLogs({ type = "combined", length = 100, timeFilterRange = null, order = "Head", file = "text" }) {
-         try {
+    async retrieveLogs({
+        type = 'combined',
+        length = 100,
+        timeFilterRange = null,
+        order = 'Head',
+        file = 'text',
+    }) {
+        try {
+            //validate inputs
 
-             //validate inputs
-             
-            
+            // read log file i.e error, request, combined etc
+            const logs = await readFiles(resolve(__dirname, `../../logs/${type}.log`), {
+                encoding: 'utf8',
+            });
 
-             // read log file i.e error, request, combined etc
-             const logs = await readFiles(resolve(__dirname, `../../logs/${type}.log`), {
-                 encoding: "utf8"
-             });
+            // convert logs from string to array
+            const convertedLogsToArray =
+                type === 'exception' ? logs.split('\r\n') : logs.split('\n');
 
+            //Remove the undefined in the array after split
+            !convertedLogsToArray[convertedLogsToArray.length - 1] && convertedLogsToArray.pop();
 
+            // clean logs from extras and conveert to  array of  json
+            let jsonizedLogs = convertedLogsToArray.map(Loggers.#clean(type));
 
-             // convert logs from string to array
-             const convertedLogsToArray = (type === "exception") ? logs.split("\r\n") : logs.split("\n")
+            //filter logs by timestamp
+            if (timeFilterRange) {
+                let [startDate, endDate] = timeFilterRange.split('*');
 
-             //Remove the undefined in the array after split
-             !convertedLogsToArray[convertedLogsToArray.length - 1] && convertedLogsToArray.pop();
+                startDate = startDate
+                    ? Loggers.#parseDate(startDate)
+                    : Loggers.#parseDate(new Date());
 
-       
-             // clean logs from extras and conveert to  array of  json
-             let jsonizedLogs = convertedLogsToArray.map(Loggers.#clean(type));
+                endDate = endDate ? Loggers.#parseDate(endDate) : Loggers.#parseDate(new Date());
 
-      
+                jsonizedLogs = jsonizedLogs.filter((value) => {
+                    const time = new Date(value.timestamp);
 
-             //filter logs by timestamp
-             if (timeFilterRange) {
-                 let [startDate, endDate] = timeFilterRange.split("*");
+                    return time > startDate && time < endDate;
+                });
+            }
 
-                 startDate = startDate ? Loggers.#parseDate(startDate) : Loggers.#parseDate(new Date());
+            //get range to display
+            let range =
+                order == 'Tail' ? [jsonizedLogs.length - length, jsonizedLogs.length] : [0, length];
 
-                 endDate = endDate ? Loggers.#parseDate(endDate) : Loggers.#parseDate(new Date());
+            //get range of logs to return
+            const selectedLogs = jsonizedLogs.splice(...range);
 
-                 jsonizedLogs = jsonizedLogs.filter((value) => {
+            // send json back to the client
+            if (file === 'json') {
+                return selectedLogs;
+            }
 
-                     const time = new Date(value.timestamp);
-
-                     return time > startDate && time < endDate
-
-                 })
-             }
-
-             //get range to display
-             let range = order == "Tail" ? [jsonizedLogs.length - length, jsonizedLogs.length] : [0, length]
-
-             //get range of logs to return 
-             const selectedLogs = jsonizedLogs.splice(...range);
-
-             // send json back to the client
-             if (file === "json") {
-                 return selectedLogs;
-             }
-
-             //send strings back to the client
-             return selectedLogs.reduce(Loggers.#formatString(type), ``);
-         } catch (e) {
-             if (e.errno === -4058) {
-                 return `${type}.log is not found`
-             }
-             return e;
-         }
-
-}
-
-
-
-static #formatString(type) {
-
-    return (previous, current) => {
-        //[Wed, 10 Nov 2021 08:08:49 GMT ::1 - ] GET /version?timeout=5s HTTP/1.1 | 404 2.553 ms
-        if (type === "request") {
-            const { timestamp, ip, method, route, version, status, runtime } = current;
-            return previous + `[${timestamp} GMT ${ip}] ${method} ${route} ${version} | ${status} ${runtime}\n`
-        } else {
-            const { timestamp, loglevel, message } = current;
-
-            return previous + `[${timestamp} : ${loglevel}] - ${message}\n`
+            //send strings back to the client
+            return selectedLogs.reduce(Loggers.#formatString(type), ``);
+        } catch (e) {
+            if (e.errno === -4058) {
+                return `${type}.log is not found`;
+            }
+            return e;
         }
     }
-}
 
- static #parseDate(date) {
-    let newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + 1);
-    return newDate;
-}
+    static #formatString(type) {
+        return (previous, current) => {
+            //[Wed, 10 Nov 2021 08:08:49 GMT ::1 - ] GET /version?timeout=5s HTTP/1.1 | 404 2.553 ms
+            if (type === 'request') {
+                const { timestamp, ip, method, route, version, status, runtime } = current;
+                return (
+                    previous +
+                    `[${timestamp} GMT ${ip}] ${method} ${route} ${version} | ${status} ${runtime}\n`
+                );
+            } else {
+                const { timestamp, loglevel, message } = current;
 
+                return previous + `[${timestamp} : ${loglevel}] - ${message}\n`;
+            }
+        };
+    }
 
+    static #parseDate(date) {
+        let newDate = new Date(date);
+        newDate.setDate(newDate.getDate() + 1);
+        return newDate;
+    }
 
-static  #clean(type) {
-     
-          return (value) => {
+    static #clean(type) {
+        return (value) => {
+            if (type == 'request') {
+                const [firstPart, secondPart] = value.split(' | ');
+                const [status, runtime] = secondPart.split(' ');
+                let [stamp, request] = firstPart.split(']');
+                let [timestamp, ip] = stamp.split('GMT');
+                request = request.slice(1, -1);
+                const [method, route, version] = request.split(' ');
 
-        if (type == "request") {
+                timestamp = timestamp.slice(1, -1);
 
-            const [firstPart, secondPart] = value.split(" | ");
-            const [status, runtime] = secondPart.split(" ");
-            let [stamp, request] = firstPart.split("]")
-            let [timestamp, ip] = stamp.split("GMT");
-            request = request.slice(1, -1);
-            const [method, route, version] = request.split(" ")
+                return {
+                    method,
+                    route,
+                    version,
+                    ip,
+                    timestamp,
+                    ip,
+                    status,
+                    runtime: `${runtime} ms`,
+                };
+            } else {
+                const [stamp, message] = value.split(' - ');
 
-            timestamp = timestamp.slice(1, -1);
+                let [timestamp, loglevel] = stamp.split(' : ');
 
-            return { method, route, version, ip, timestamp, ip, status, runtime: `${runtime} ms` }
+                timestamp = timestamp.slice(1, -1);
 
-        } else {
-            const [stamp, message] = value.split(" - ");
+                loglevel = loglevel.slice(0, -1);
 
-            let [timestamp, loglevel] = stamp.split(" : ");
-
-            timestamp = timestamp.slice(1, -1);
-
-            loglevel = loglevel.slice(0, -1);
-
-            return { timestamp, loglevel, message }
-        }
+                return { timestamp, loglevel, message };
+            }
+        };
     }
 }
-
-
-  
-}
-
-
-
-
 
 const logs = new Loggers();
 
-module.exports = { Logger: logs.logger, morganRequestMiddleware : logs.morganRequestMiddleware,  retrieveLogs : logs.retrieveLogs };
+module.exports = {
+    Logger: logs.logger,
+    morganRequestMiddleware: logs.morganRequestMiddleware,
+    retrieveLogs: logs.retrieveLogs,
+};

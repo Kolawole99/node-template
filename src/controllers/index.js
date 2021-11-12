@@ -53,7 +53,6 @@ class Controller {
         return JSON.parse(JSON.stringify(data));
     }
 
-
     /**
      * @static
      * @private
@@ -61,29 +60,20 @@ class Controller {
      * @returns {string}   modified error message based on error code
      */
     static #mongoErrorMessage({ error }) {
-        const { name, code , keyPattern } = error;
-      
-       
-            if (name === "MongoError" && code && code === 11000) {
-               
-                const keys = Object.keys(keyPattern).join(",");
-                return `Entry already exist for ${keys} `;
-            
-            } else if (name === "ValidationError") {
-               
-                if (error.errors[Object.keys(error.errors)[0]].properties) {
-                    const { type, path } = error.errors[Object.keys(error.errors)[0]].properties;
-                    return `Validation failed for field ${path} (${type}) `;
-                } else {
-                    const { kind, value, path } = error.errors[Object.keys(error.errors)[0]];
-                    return `Validation failed for field ${path} (${value}) instead of ${kind} `;
-               }
-                    
-              
+        const { name, code, keyPattern } = error;
+
+        if (name === 'MongoError' && code && code === 11000) {
+            const keys = Object.keys(keyPattern).join(',');
+            return `Entry already exist for ${keys} `;
+        } else if (name === 'ValidationError') {
+            if (error.errors[Object.keys(error.errors)[0]].properties) {
+                const { type, path } = error.errors[Object.keys(error.errors)[0]].properties;
+                return `Validation failed for field ${path} (${type}) `;
+            } else {
+                const { kind, value, path } = error.errors[Object.keys(error.errors)[0]];
+                return `Validation failed for field ${path} (${value}) instead of ${kind} `;
             }
-     
-       
-    
+        }
     }
 
     /**
@@ -101,9 +91,8 @@ class Controller {
      * @returns {ControllerError} a JSON formatted instance of controller error
      */
     static #processError(error) {
-       
-        const message =  Controller.#mongoErrorMessage({error}) || error.message;
-                const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
+        const message = Controller.#mongoErrorMessage({ error }) || error.message;
+        const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
         return Controller.#jsonize({ failed: true, error: errorMessage });
     }
 

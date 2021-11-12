@@ -6,8 +6,9 @@ logs/
 # Documentation
 docs/
 
-# Project properties file
+# Project properties folders and file
 .env
-node_modules/
-package-lock.json
 yarn.lock
+package-lock.json
+node_modules/
+.vscode/

@@ -1,6 +1,5 @@
 const router = require('express').Router();
-const { handle404, handleError, setupRequest, processResponse } = require("../middlewares/http");
-const { route } = require('./sample');
+const { handle404, handleError, setupRequest, processResponse } = require('../middlewares/http');
 
 /** Route Handlers */
 const sampleRouteHandler = require('./sample');
@@ -12,15 +11,11 @@ router.use('/samples', sampleRouteHandler);
 router.use(processResponse);
 
 /** Static Routes */
-router.use('/image/:imageName', () => { });
-
-
+router.use('/image/:imageName', () => {});
 /** Query Logs */
 router.use('/logs', logsRouterHandler);
 
 router.use(handle404);
-
 router.use(handleError);
-
 
 module.exports = router;

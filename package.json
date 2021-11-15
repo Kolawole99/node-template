@@ -45,6 +45,7 @@
     "@types/morgan": "^1.9.3",
     "@types/node-cron": "^3.0.0",
     "@types/nodemailer": "^6.4.4",
+    "@types/redis": "^2.8.32",
     "chai": "^4.2.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -60,9 +61,10 @@
     "sinon": "^9.0.2"
   },
   "scripts": {
-    "generate-documentation": "jsdoc -c jsdoc.json",
-    "start": "node -r dotenv/config index.js",
     "dev": "nodemon -r dotenv/config index.js",
-    "test": "nyc --reporter=html mocha --recursive -w -c || true"
+    "test": "nyc --reporter=html mocha --recursive -w -c || true",
+    "update-env": "cp .env .env.example",
+    "generate-documentation": "jsdoc -c jsdoc.json",
+    "start": "node -r dotenv/config index.js"
   }
 }

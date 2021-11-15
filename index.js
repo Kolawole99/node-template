@@ -16,13 +16,13 @@ const hpp = require('hpp');
 /** Non-global Utilities */
 const { connectToDatabase, loadModels } = require('./src/models/_config');
 const { morganRequestMiddleware } = require('./src/utilities/logger');
-const { loadEventSystem } = require('./src/events/_loader');
 const { connectToRedis } = require('./src/utilities/caching');
+const { loadEventSystem } = require('./src/events/_loader');
 
 const app = express();
 connectToDatabase();
-connectToRedis();
 loadEventSystem();
+connectToRedis();
 loadModels();
 
 /** Global Utilities */

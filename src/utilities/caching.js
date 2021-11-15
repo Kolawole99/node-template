@@ -2,9 +2,9 @@
  *
  * This handles the caching of unique field in a model, based on a particular service.
  * The unique field is determined based on the definition of the model.
- * @module UTIL:Caching
+ * @module UTILITY:Caching
  */
-const { NODE_ENV, redisConnectionPort, redisPassword, redisConnectionUrl } = process.env;
+const { NODE_ENV, REDIS_CONNECTION_PORT, REDIS_PASSWORD, REDIS_CONNECTION_URL } = process.env;
 const { promisify } = require('util');
 const redis = require('redis');
 
@@ -12,7 +12,6 @@ const redis = require('redis');
  *
  * @class
  * @classdesc This is the integration of a caching system using RedisDB(in-memory store) using basic keys such as set, get and del. This can be extended based on use-case, but this class covers the basic operations of caching.
- *
  */
 class DatabaseCaching {
     /**
@@ -21,13 +20,13 @@ class DatabaseCaching {
      * @field
      */
     static client = redis.createClient({
-        host: redisConnectionUrl,
-        port: redisConnectionPort,
-        password: redisPassword,
+        host: REDIS_CONNECTION_URL,
+        port: REDIS_CONNECTION_PORT,
+        password: REDIS_PASSWORD,
     });
 
     /**
-     * Promisifies the get key from redis client in order to return value without using callback approach, making use of async/await.
+     * Promisify the get key from redis client in order to return value without using callback approach, making use of async/await.
      * @static
      * @field
      *
@@ -42,7 +41,7 @@ class DatabaseCaching {
     static connectToRedis() {
         try {
             DatabaseCaching.client.on('connect', () => {
-                console.log(`successfully connected to redis on port ${redisConnectionPort}`);
+                console.log(`🌀 Redis connected on port ${REDIS_CONNECTION_PORT}`);
             });
             DatabaseCaching.client.on('error', (err) => {
                 throw err;

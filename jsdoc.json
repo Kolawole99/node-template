@@ -12,6 +12,6 @@
     "opts": {
         "recurse": true,
         "destination": "./docs/",
-        "template": "custom-documentation-template"
+        "template": "docs-tplt"
     }
 }

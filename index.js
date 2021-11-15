@@ -46,6 +46,6 @@ app.listen(APP_PORT, () => {
     if (NODE_ENV === 'DEVELOPMENT') {
         console.log(`🔥 Development Server is running at http://localhost:${APP_PORT} 👍`);
     } else {
-        console.log(`😃 ${APP_NAME} is LIVE on port ${APP_PORT}. 👍`);
+        console.log(`😃 ${APP_NAME} is LIVE on port ${APP_PORT} 👍`);
     }
 });

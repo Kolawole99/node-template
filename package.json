@@ -64,7 +64,7 @@
     "dev": "nodemon -r dotenv/config index.js",
     "test": "nyc --reporter=html mocha --recursive -w -c || true",
     "update-env": "cp .env .env.example",
-    "generate-documentation": "jsdoc -c jsdoc.json",
+    "update-documentation": "jsdoc -c jsdoc.json",
     "start": "node -r dotenv/config index.js"
   }
 }

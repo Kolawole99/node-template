@@ -41,7 +41,7 @@ class DatabaseCaching {
     static connectToRedis() {
         try {
             DatabaseCaching.client.on('connect', () => {
-                console.log(`🌀 Redis connected on port ${REDIS_CONNECTION_PORT}`);
+                console.log(`🌀 Redis connected on port ${REDIS_CONNECTION_PORT} 👍`);
             });
             DatabaseCaching.client.on('error', (err) => {
                 throw err;

@@ -1,5 +1,12 @@
+/**
+ * This handles all the required routes configuration for the application logs and external logging feature.
+ * @module ROUTES:Logs
+ */
+
 const { NODE_ENV } = process.env;
+
 const router = require('express').Router();
+
 const { Logger, retrieveLogs } = require('../utilities/logger');
 
 try {

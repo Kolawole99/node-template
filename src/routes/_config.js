@@ -1,7 +1,12 @@
+/**
+ * This handles all the required Express router configuration for the application.
+ * @module ROUTES:Config
+ */
+
 const router = require('express').Router();
 const { handle404, handleError, setupRequest, processResponse } = require('../middlewares/http');
 
-/** Route Handlers */
+/** Models Route Handlers */
 const sampleRouteHandler = require('./sample');
 const logsRouterHandler = require('./logs');
 

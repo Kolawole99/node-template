@@ -216,7 +216,7 @@ class Controller {
      * @param {object} conditions destructured object parameter used to filter the database to update matching documents
      * @returns {object|Promise<void>} Either instance of the mongodb update method response/error
      */
-    async deleteRecords(conditions) {
+    async deleteRecords({ conditions }) {
         try {
             const result = await this.model.updateMany(
                 { ...conditions },

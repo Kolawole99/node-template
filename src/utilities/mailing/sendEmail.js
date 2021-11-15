@@ -54,4 +54,4 @@ async function sendEmail({ email, subject, payload, templateFileDirectory }) {
     }
 }
 
-global.sendEmail = sendEmail;
+module.exports = sendEmail;

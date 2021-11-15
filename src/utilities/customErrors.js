@@ -24,5 +24,4 @@ class CustomValidationError extends MyError {}
  */
 class CustomControllerError extends MyError {}
 
-global.CustomValidationError = CustomValidationError;
-global.CustomControllerError = CustomControllerError;
+module.exports = { CustomValidationError, CustomControllerError };

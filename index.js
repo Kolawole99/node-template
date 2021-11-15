@@ -17,18 +17,16 @@ const hpp = require('hpp');
 const { connectToDatabase, loadModels } = require('./src/models/_config');
 const { morganRequestMiddleware } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
+const { connectToRedis } = require('./src/utilities/caching');
 
 const app = express();
 connectToDatabase();
+connectToRedis();
 loadEventSystem();
 loadModels();
 
 /** Global Utilities */
-require('./src/utilities/modelGlobalization');
-require('./src/utilities/mailing/sendEmail');
-require('./src/utilities/customErrors');
-require('./src/utilities/encryption');
-
+require('./src/utilities/globals');
 
 /** Middleware Applications */
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -40,10 +38,8 @@ app.use(helmet());
 app.use(cors());
 app.use(hpp());
 
-
-    /** Route Middleware */
-    app.use('/', require('./src/routes/_config'));
-
+/** Route Middleware */
+app.use('/', require('./src/routes/_config'));
 
 /** Starting Server */
 app.listen(APP_PORT, () => {

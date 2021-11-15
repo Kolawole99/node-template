@@ -29,6 +29,8 @@ class SampleService extends RootService {
 
     /**
      *
+     * This method is an implementation to handle the business logic of Creating and saving new records into the database.
+     * This should be used alongside a POST Request alone.
      * @async
      * @method
      * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
@@ -56,6 +58,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of Reading an existing records from the database by ID.
+     * This should be used alongside a GET Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async readRecordById({ request, next }) {
         try {
             const { id } = request.params;
@@ -76,6 +86,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of Reading existing records from the database by a query filter.
+     * This should be used alongside a GET Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async readRecordsByFilter({ request, next }) {
         try {
             const { query } = request;
@@ -97,6 +115,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of Reading existing records from the database by a wildcard query built using the Query utility.
+     * This should be used alongside a GET Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async readRecordsByWildcard({ request, next }) {
         try {
             const { params, query } = request;
@@ -128,6 +154,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of updating an existing records by ID.
+     * This should be used alongside a PUT Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async updateRecordById({ request, next }) {
         try {
             const { id } = request.params;
@@ -155,6 +189,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of updating multiple existing records.
+     * This should be used alongside a PUT Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async updateRecords({ request, next }) {
         try {
             const { options, data } = request.body;
@@ -185,6 +227,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of deleting an existing records by ID.
+     * This should be used alongside a DELETE Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async deleteRecordById({ request, next }) {
         try {
             const { id } = request.params;
@@ -205,6 +255,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of deleting multiple existing records.
+     * This should be used alongside a DELETE Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async deleteRecords({ request, next }) {
         try {
             const { options } = request.body;

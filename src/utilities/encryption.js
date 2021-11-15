@@ -49,7 +49,4 @@ async function verifyToken(tokenToVerify) {
     return await verifyJWT(tokenToVerify, SIGNATURE);
 }
 
-global.hashObject = hashObject;
-global.verifyObject = verifyObject;
-global.generateToken = generateToken;
-global.verifyToken = verifyToken;
+module.exports = { hashObject, verifyObject, generateToken, verifyToken };

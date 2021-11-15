@@ -1,6 +1,6 @@
 /**
- * This handles all the required routes configuration for the application logs and external logging feature.
- * @module ROUTES:Logs
+ * This handles all the configuration for the application logs and external logging feature.
+ * @module ROUTES:ExternalLogger
  */
 
 const { NODE_ENV } = process.env;

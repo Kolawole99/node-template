@@ -1,3 +1,8 @@
+/**
+ * This handles all the required model configuration for the application.
+ * @module MODELS:Config
+ */
+
 const { APP_DB_URI, NODE_ENV } = process.env;
 
 const { resolve } = require('path');
@@ -20,7 +25,7 @@ function connectToDatabase() {
                 autoIndex: true,
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
-                useCreateIndex: true
+                useCreateIndex: true,
             },
             (err, data) => {
                 if (err) {

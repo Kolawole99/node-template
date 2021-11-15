@@ -147,7 +147,7 @@ class RootService {
      */
     processSingleRead(result) {
         if (result && result.id) return RootService.#processSuccessfulResponse({ payload: result });
-        return RootService.#processFailedResponse('Resource not found', 404);
+        return RootService.#processFailedResponse({ message: 'Resource not found', code: 404 });
     }
 
     /**
@@ -159,9 +159,9 @@ class RootService {
      */
     processMultipleReadResults(result) {
         if (result && (result.count || result.length >= 0)) {
-            return RootService.#processSuccessfulResponse(result);
+            return RootService.#processSuccessfulResponse({ payload: result });
         }
-        return RootService.#processFailedResponse('Resources not found', 404);
+        return RootService.#processFailedResponse({ message: 'Resource not found', code: 404 });
     }
 
     /**
@@ -183,12 +183,12 @@ class RootService {
             if (eventName) {
                 appEvent.emit(eventName, result);
             }
-            return RootService.#processSuccessfulResponse(result);
+            return RootService.#processSuccessfulResponse({ payload: result });
         }
         if (result && result.ok && !result.nModified) {
-            return RootService.#processSuccessfulResponse(result, 204);
+            return RootService.#processSuccessfulResponse({ payload: result, code: 204 });
         }
-        return RootService.#processFailedResponse('Update failed', 400);
+        return RootService.#processFailedResponse({ message: 'Update failed', code: 400 });
     }
 
     /**
@@ -199,8 +199,9 @@ class RootService {
      * @returns An instance of SuccessfulResponse/FailedResponse
      */
     processDeleteResult(result) {
-        if (result && result.nModified) return RootService.#processSuccessfulResponse(result);
-        return RootService.#processFailedResponse('Deletion failed.', 200);
+        if (result && result.nModified)
+            return RootService.#processSuccessfulResponse({ payload: result });
+        return RootService.#processFailedResponse({ message: 'Deletion failed.', code: 400 });
     }
 }
 

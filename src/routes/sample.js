@@ -19,7 +19,7 @@ try {
             next();
         })
         .get('/', async (request, response, next) => {
-            request.payload = await sampleService.readRecordsByFilter({ request, next });
+            request.payload = await sampleService.readRecords({ request, next });
             next();
         })
         .get('/:id', async (request, response, next) => {

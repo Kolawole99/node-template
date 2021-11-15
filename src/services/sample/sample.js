@@ -7,6 +7,7 @@
 const RootService = require('../_root');
 const { buildQuery, buildWildcardOptions } = require('../../utilities/query');
 const { createSchema, updateSchema } = require('../../validators/sample');
+const DatabaseCaching = require('../../utilities/caching');
 
 /**
  *
@@ -44,8 +45,10 @@ class SampleService extends RootService {
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
             const result = await this.sampleController.createRecord({ ...body });
-            if (result.failed) throw new CustomControllerError(result.error);
 
+
+            if (result.failed) throw new CustomControllerError(result.error);
+            DatabaseCaching.insertRecord('id', result.id, result, this.serviceName);
             return this.processSingleRead(result);
         } catch (e) {
             let processedError = this.formatError({
@@ -68,18 +71,42 @@ class SampleService extends RootService {
      */
     async readRecordById({ request, next }) {
         try {
-            const { id } = request.params;
+            const { params } = request;
+            const { id } = params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
-
-            const result = await this.sampleController.readRecords({ id, isActive: true });
-            if (result.failed) throw new CustomControllerError(result.error);
-
-            return this.processSingleRead(result[0]);
+            const cachedResult = await DatabaseCaching.getRecord('id', id, this.serviceName);
+            if (cachedResult) {
+                return this.processSingleRead(cachedResult);
+            }
+            const [result] = await this.sampleController.readRecords({
+                conditions: { id, isActive: true },
+            });
+            if (result && result.failed) throw new CustomControllerError(result.error);
+            if (!cachedResult && result)
+                DatabaseCaching.insertRecord('id', result.id, result, this.serviceName);
+            return this.processSingleRead(result);
         } catch (e) {
             let processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'readRecordById',
+            });
+
+            return next(processedError);
+        }
+    }
+    async readRecords({ next }) {
+        try {
+            const result = await this.sampleController.readRecords({
+                conditions: {},
+            });
+            if (result.failed) throw new CustomControllerError(result.error);
+            return this.processMultipleReadResults(result);
+        } catch (e) {
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: 'readRecordsByFilter',
             });
 
             return next(processedError);
@@ -94,13 +121,17 @@ class SampleService extends RootService {
      * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
      * @returns {object<processSingleRead|processedError>}
      */
+
     async readRecordsByFilter({ request, next }) {
         try {
             const { query } = request;
             if (Object.keys(query).length === 0)
                 throw new CustomValidationError('Query is required to filter.');
 
-            const result = await this.handleDatabaseRead(this.sampleController, query);
+            const result = await this.handleDatabaseRead({
+                Controller: this.sampleController,
+                queryOptions: query,
+            });
             if (result.failed) throw new CustomControllerError(result.error);
 
             return this.processMultipleReadResults(result);
@@ -153,7 +184,6 @@ class SampleService extends RootService {
             return next(processedError);
         }
     }
-
     /**
      * This method is an implementation to handle the business logic of updating an existing records by ID.
      * This should be used alongside a PUT Request alone.
@@ -162,22 +192,26 @@ class SampleService extends RootService {
      * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
      * @returns {object<processSingleRead|processedError>}
      */
+
     async updateRecordById({ request, next }) {
         try {
-            const { id } = request.params;
+            const { params, body } = request;
+            const { id } = params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
 
-            const data = request.body;
+            const { data } = body;
             if (Object.keys(data).length === 0)
-                throw new CustomValidationError('Update requires data.');
+                throw new CustomValidationError('Update requires a field.');
 
             const { error } = updateSchema.validate(data);
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
-
-            const result = await this.sampleController.updateRecords({ id }, { ...data });
-            if (result.failed) throw new CustomControllerError(result.error);
-
-            return this.processUpdateResult(result);
+            const result = await this.sampleController.updateRecords({
+                conditions: { id },
+                data,
+            });
+            if (result && result.failed) throw new CustomControllerError(result.error);
+            DatabaseCaching.deleteRecord('id', id, this.serviceName);
+            return this.processUpdateResult({ result });
         } catch (e) {
             let processedError = this.formatError({
                 service: this.serviceName,
@@ -240,9 +274,9 @@ class SampleService extends RootService {
             const { id } = request.params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
 
-            const result = await this.sampleController.deleteRecords({ id });
+            const result = await this.sampleController.deleteRecords({ conditions: { id } });
             if (result.failed) throw new CustomControllerError(result.error);
-
+            DatabaseCaching.deleteRecord('id', id, this.serviceName);
             return this.processDeleteResult(result);
         } catch (e) {
             let processedError = this.formatError({

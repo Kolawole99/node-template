@@ -1,15 +1,20 @@
 /**
- * @author Oguntuberu Nathan O. <nateoguns.work@gmail.com>
+ * This is a base implementation that extends Node.js Readable streams
+ * @module STREAMS:SampleReadableStream
  */
-
 const { Readable } = require('stream');
 
-class SampleReadStream extends Readable {
+/**
+ * This extends the Readable streams
+ *  TODO: You can strip out all the code in this file to implement what you need. These are all placeholders
+ * @class
+ */
+class SampleReadableStream extends Readable {
     constructor(source, options = {}) {
         super(options);
         this.source = [];
         this.sourceKeys = [];
-        SampleReadStream.formatSource(source);
+        SampleReadableStream.formatSource(source);
     }
 
     static formatSource(source) {
@@ -31,4 +36,4 @@ class SampleReadStream extends Readable {
         this.push(null);
     }
 }
-module.exports = SampleReadStream;
+module.exports = SampleReadableStream;

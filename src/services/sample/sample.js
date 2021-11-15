@@ -21,6 +21,22 @@ class SampleService extends RootService {
         this.serviceName = 'SampleService';
     }
 
+    /**
+     *
+     * @typedef RequestFunctionParameter
+     * @property {object} request Express Request parameter
+     * @property {function} next Express NextFunction parameter
+     */
+
+    /**
+     *
+     * This method is an implementation to handle the business logic of Creating and saving new records into the database.
+     * This should be used alongside a POST Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async createRecord({ request, next }) {
         try {
             const { body } = request;
@@ -29,6 +45,7 @@ class SampleService extends RootService {
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
             const result = await this.sampleController.createRecord({ ...body });
+
 
             if (result.failed) throw new CustomControllerError(result.error);
             DatabaseCaching.insertRecord('id', result.id, result, this.serviceName);
@@ -44,6 +61,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of Reading an existing records from the database by ID.
+     * This should be used alongside a GET Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async readRecordById({ request, next }) {
         try {
             const { params } = request;
@@ -88,6 +113,15 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of Reading existing records from the database by a query filter.
+     * This should be used alongside a GET Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
+
     async readRecordsByFilter({ request, next }) {
         try {
             const { query } = request;
@@ -112,7 +146,15 @@ class SampleService extends RootService {
         }
     }
 
-    async readRecordsByWildcard(request, next) {
+    /**
+     * This method is an implementation to handle the business logic of Reading existing records from the database by a wildcard query built using the Query utility.
+     * This should be used alongside a GET Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
+    async readRecordsByWildcard({ request, next }) {
         try {
             const { params, query } = request;
             if (!params || !query) throw new CustomValidationError('Invalid key/keyword');
@@ -142,6 +184,14 @@ class SampleService extends RootService {
             return next(processedError);
         }
     }
+    /**
+     * This method is an implementation to handle the business logic of updating an existing records by ID.
+     * This should be used alongside a PUT Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
 
     async updateRecordById({ request, next }) {
         try {
@@ -173,7 +223,15 @@ class SampleService extends RootService {
         }
     }
 
-    async updateRecords(request, next) {
+    /**
+     * This method is an implementation to handle the business logic of updating multiple existing records.
+     * This should be used alongside a PUT Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
+    async updateRecords({ request, next }) {
         try {
             const { options, data } = request.body;
             if (!options || !data) throw new CustomValidationError('Invalid options/data');
@@ -203,6 +261,14 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of deleting an existing records by ID.
+     * This should be used alongside a DELETE Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
     async deleteRecordById({ request, next }) {
         try {
             const { id } = request.params;
@@ -223,7 +289,15 @@ class SampleService extends RootService {
         }
     }
 
-    async deleteRecords(request, next) {
+    /**
+     * This method is an implementation to handle the business logic of deleting multiple existing records.
+     * This should be used alongside a DELETE Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
+    async deleteRecords({ request, next }) {
         try {
             const { options } = request.body;
             if (Object.keys(options).length === 0)

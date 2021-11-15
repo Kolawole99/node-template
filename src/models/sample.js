@@ -1,3 +1,8 @@
+/**
+ * This handles all the required configuration for the Sample model.
+ * @module MODELS:Sample
+ */
+
 const { model, Schema } = require('mongoose');
 
 const SampleSchema = new Schema({
@@ -11,7 +16,7 @@ const SampleSchema = new Schema({
     test: {
         type: Number,
         required: true,
-        unique: true
+        unique: true,
     },
     isActive: {
         type: Boolean,

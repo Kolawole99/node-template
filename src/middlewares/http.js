@@ -52,7 +52,7 @@ function handle404(request, response, next) {
         error: 'Resource not found',
         payload: null,
     };
-  
+
     next(returnData);
 }
 
@@ -67,7 +67,7 @@ function handle404(request, response, next) {
  */
 function handleError(error, request, response, next) {
     // Log errors
-   Logger.error(error.error || error.message);
+    Logger.error(error.error || error.message);
 
     // return error
     return response.status(error.status || 500).json({
@@ -76,8 +76,6 @@ function handleError(error, request, response, next) {
         payload: null,
     });
 }
-
-
 
 module.exports = {
     handle404,

@@ -1,3 +1,8 @@
+/**
+ * This handles all the required model configuration for the application.
+ * @module MODELS:Config
+ */
+
 const { APP_DB_URI, NODE_ENV } = process.env;
 
 const { resolve } = require('path');

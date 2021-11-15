@@ -1,7 +1,7 @@
 {
   "name": "node-template",
   "version": "2.3.2",
-  "description": "Boilerplate for our node applications. This templates serves as a guide for synchronization.",
+  "description": "Boilerplate for our node applications. This templates serves as a guide for teams synchronization.",
   "main": "index.js",
   "author": "Oguntuberu Nathan O.",
   "license": "ISC",

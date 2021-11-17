@@ -49,7 +49,7 @@ class RootService {
                 ? `[${service}] ${functionName}: ${error.message}`
                 : error.message;
 
-        return RootService.#processFailedResponse({ message, code });
+        return RootService.processFailedResponse({ message, code });
     }
 
     /**
@@ -67,7 +67,7 @@ class RootService {
      * @param {ProcessFailedResponseParameter} destructuredObject The instance of the defined param object.
      * @returns {object} This always has error set to a string and payload to null.
      */
-    static #processFailedResponse({ message, code = 400 }) {
+    static processFailedResponse({ message, code = 400 }) {
         return {
             error: message,
             payload: null,
@@ -92,7 +92,7 @@ class RootService {
      * @param {ProcessSuccessfulResponseParameter} destructuredObject The instance of the defined param object
      * @returns {object} This always has error set to null and payload an object.
      */
-    static #processSuccessfulResponse({
+    static processSuccessfulResponse({
         payload,
         code = 200,
         sendRawResponse = false,
@@ -146,8 +146,8 @@ class RootService {
      * @returns An instance of SuccessfulResponse/FailedResponse
      */
     processSingleRead(result) {
-        if (result && result.id) return RootService.#processSuccessfulResponse({ payload: result });
-        return RootService.#processFailedResponse({ message: 'Resource not found', code: 404 });
+        if (result && result.id) return RootService.processSuccessfulResponse({ payload: result });
+        return RootService.processFailedResponse({ message: 'Resource not found', code: 404 });
     }
 
     /**
@@ -159,9 +159,9 @@ class RootService {
      */
     processMultipleReadResults(result) {
         if (result && (result.count || result.length >= 0)) {
-            return RootService.#processSuccessfulResponse({ payload: result });
+            return RootService.processSuccessfulResponse({ payload: result });
         }
-        return RootService.#processFailedResponse({ message: 'Resource not found', code: 404 });
+        return RootService.processFailedResponse({ message: 'Resource not found', code: 404 });
     }
 
     /**
@@ -183,12 +183,12 @@ class RootService {
             if (eventName) {
                 appEvent.emit(eventName, result);
             }
-            return RootService.#processSuccessfulResponse({ payload: result });
+            return RootService.processSuccessfulResponse({ payload: result });
         }
         if (result && result.ok && !result.nModified) {
-            return RootService.#processSuccessfulResponse({ payload: result, code: 204 });
+            return RootService.processSuccessfulResponse({ payload: result, code: 204 });
         }
-        return RootService.#processFailedResponse({ message: 'Update failed', code: 400 });
+        return RootService.processFailedResponse({ message: 'Update failed', code: 400 });
     }
 
     /**
@@ -200,8 +200,8 @@ class RootService {
      */
     processDeleteResult(result) {
         if (result && result.nModified)
-            return RootService.#processSuccessfulResponse({ payload: result });
-        return RootService.#processFailedResponse({ message: 'Deletion failed.', code: 400 });
+            return RootService.processSuccessfulResponse({ payload: result });
+        return RootService.processFailedResponse({ message: 'Deletion failed.', code: 400 });
     }
 }
 

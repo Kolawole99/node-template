@@ -36,7 +36,7 @@ function connectToDatabase() {
                     }
                     return;
                 }
-                if (data) console.log('🟢 Database connection successful ✅');
+                if (data) console.log('🟢 Database connection successful');
             }
         );
     } catch (e) {

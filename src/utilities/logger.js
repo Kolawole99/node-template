@@ -3,19 +3,21 @@
  */
 
 const { NODE_ENV } = process.env;
+
 const { createWriteStream, readFile } = require('fs');
 const { resolve } = require('path');
+
 const morgan = require('morgan');
-const { promisify } = require('fs/promises');
 const { createLogger, format, transports } = require('winston');
+
 const readFiles = require('util').promisify(readFile);
 
 class Loggers {
     constructor() {
-        this.#init();
+        this.init();
     }
 
-    #init() {
+    init() {
         /** MORGAN */
         const devFormat =
             '[:date[web] :remote-addr :remote-user ] :method :url HTTP/:http-version | :status :response-time ms';
@@ -32,7 +34,7 @@ class Loggers {
         this.morganRequestMiddleware = morgan(morganFormat, { stream: requestLogStream });
 
         /** WINSTON */
-        const { colorize, combine, printf, timestamp, json } = format;
+        const { colorize, combine, printf, timestamp } = format;
 
         const logTransports = {
             console: new transports.Console({ level: 'warn' }),
@@ -42,8 +44,7 @@ class Loggers {
         };
 
         const logFormat = printf(
-            // eslint-disable-next-line no-shadow
-            ({ level, message, timestamp }) => `[${timestamp} : ${level}] - ${message}`
+            ({ level, message, timestamp }) => `[${timestamp} : ${level}] - ${message}]`
         );
 
         this.logger = createLogger({
@@ -82,17 +83,17 @@ class Loggers {
             !convertedLogsToArray[convertedLogsToArray.length - 1] && convertedLogsToArray.pop();
 
             // clean logs from extras and conveert to  array of  json
-            let jsonizedLogs = convertedLogsToArray.map(Loggers.#clean(type));
+            let jsonizedLogs = convertedLogsToArray.map(Loggers.clean(type));
 
             //filter logs by timestamp
             if (timeFilterRange) {
                 let [startDate, endDate] = timeFilterRange.split('*');
 
                 startDate = startDate
-                    ? Loggers.#parseDate(startDate)
-                    : Loggers.#parseDate(new Date());
+                    ? Loggers.parseDate(startDate)
+                    : Loggers.parseDate(new Date());
 
-                endDate = endDate ? Loggers.#parseDate(endDate) : Loggers.#parseDate(new Date());
+                endDate = endDate ? Loggers.parseDate(endDate) : Loggers.parseDate(new Date());
 
                 jsonizedLogs = jsonizedLogs.filter((value) => {
                     const time = new Date(value.timestamp);
@@ -114,7 +115,7 @@ class Loggers {
             }
 
             //send strings back to the client
-            return selectedLogs.reduce(Loggers.#formatString(type), ``);
+            return selectedLogs.reduce(Loggers.formatString(type), ``);
         } catch (e) {
             if (e.errno === -4058) {
                 return `${type}.log is not found`;
@@ -123,7 +124,7 @@ class Loggers {
         }
     }
 
-    static #formatString(type) {
+    static formatString(type) {
         return (previous, current) => {
             //[Wed, 10 Nov 2021 08:08:49 GMT ::1 - ] GET /version?timeout=5s HTTP/1.1 | 404 2.553 ms
             if (type === 'request') {
@@ -140,13 +141,13 @@ class Loggers {
         };
     }
 
-    static #parseDate(date) {
+    static parseDate(date) {
         let newDate = new Date(date);
         newDate.setDate(newDate.getDate() + 1);
         return newDate;
     }
 
-    static #clean(type) {
+    static clean(type) {
         return (value) => {
             if (type == 'request') {
                 const [firstPart, secondPart] = value.split(' | ');

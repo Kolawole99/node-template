@@ -16,13 +16,12 @@ const hpp = require('hpp');
 /** Non-global Utilities */
 const { connectToDatabase, loadModels } = require('./src/models/_config');
 const { morganRequestMiddleware } = require('./src/utilities/logger');
-const { connectToRedis } = require('./src/utilities/caching');
 const { loadEventSystem } = require('./src/events/_loader');
+require('./src/utilities/caching');
 
 const app = express();
 connectToDatabase();
 loadEventSystem();
-connectToRedis();
 loadModels();
 
 /** Global Utilities */
@@ -44,8 +43,8 @@ app.use('/', require('./src/routes/_config'));
 /** Starting Server */
 app.listen(APP_PORT, () => {
     if (NODE_ENV === 'DEVELOPMENT') {
-        console.log(`🔥 Development Server is running at http://localhost:${APP_PORT} 👍`);
+        console.log(`🔥 Development Server is running at http://localhost:${APP_PORT}`);
     } else {
-        console.log(`😃 ${APP_NAME} is LIVE on port ${APP_PORT} 👍`);
+        console.log(`😃 ${APP_NAME} is LIVE on port ${APP_PORT}`);
     }
 });

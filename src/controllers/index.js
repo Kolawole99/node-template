@@ -36,7 +36,7 @@ class Controller {
      * @param {object} record the data to clean
      * @returns {object} a cleaned up format of the received record
      */
-    static #deleteRecordMetadata(record) {
+    static deleteRecordMetadata(record) {
         const { timeStamp, createdOn, updatedOn, __v, _id, ...recordCoreData } = record;
         return { ...recordCoreData };
     }
@@ -49,7 +49,7 @@ class Controller {
      * @param {object} data the data to stringify
      * @returns {object} A JSON stringified format of the parameter
      */
-    static #jsonize(data) {
+    static jsonize(data) {
         return JSON.parse(JSON.stringify(data));
     }
 
@@ -59,7 +59,7 @@ class Controller {
      * @param {object} error the mongo error object
      * @returns {string}   modified error message based on error code
      */
-    static #mongoErrorMessage({ error }) {
+    static mongoErrorMessage({ error }) {
         const { name, code, keyPattern } = error;
 
         if (name === 'MongoError' && code && code === 11000) {
@@ -90,10 +90,10 @@ class Controller {
      * @param {string} message input thrown from the built-in Error class
      * @returns {ControllerError} a JSON formatted instance of controller error
      */
-    static #processError(error) {
-        const message = Controller.#mongoErrorMessage({ error }) || error.message;
+    static processError(error) {
+        const message = Controller.mongoErrorMessage({ error }) || error.message;
         const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
-        return Controller.#jsonize({ failed: true, error: errorMessage });
+        return Controller.jsonize({ failed: true, error: errorMessage });
     }
 
     /**
@@ -111,9 +111,9 @@ class Controller {
             const recordToCreate = new this.model({ id: n, ...data });
             const createdRecord = await recordToCreate.save();
 
-            return Controller.#jsonize(createdRecord);
+            return Controller.jsonize(createdRecord);
         } catch (e) {
-            return Controller.#processError(e);
+            return Controller.processError(e);
         }
     }
 
@@ -169,9 +169,9 @@ class Controller {
                 .limit(limit)
                 .sort(sortOptions);
 
-            return Controller.#jsonize([...result]);
+            return Controller.jsonize([...result]);
         } catch (e) {
-            return Controller.#processError(e);
+            return Controller.processError(e);
         }
     }
 
@@ -192,7 +192,7 @@ class Controller {
      */
     async updateRecords({ conditions, data }) {
         try {
-            const dataToSet = Controller.#deleteRecordMetadata(data);
+            const dataToSet = Controller.deleteRecordMetadata(data);
             const result = await this.model.updateMany(
                 { ...conditions },
                 {
@@ -201,9 +201,9 @@ class Controller {
                 }
             );
 
-            return Controller.#jsonize({ ...result, data });
+            return Controller.jsonize({ ...result, data });
         } catch (e) {
-            return Controller.#processError(e);
+            return Controller.processError(e);
         }
     }
 
@@ -227,9 +227,9 @@ class Controller {
                 }
             );
 
-            return Controller.#jsonize(result);
+            return Controller.jsonize(result);
         } catch (e) {
-            return Controller.#processError(e);
+            return Controller.processError(e);
         }
     }
 }

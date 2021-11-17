@@ -14,36 +14,31 @@ const redis = require('redis');
  * @classdesc This is the integration of a caching system using RedisDB(in-memory store) using basic keys such as set, get and del. This can be extended based on use-case, but this class covers the basic operations of caching.
  */
 class DatabaseCaching {
-    /**
-     * This field stores RedisDB client object which would expose the API's to the set, get and del keys
-     * @static
-     * @field
-     */
-    static client = redis.createClient({
-        host: REDIS_CONNECTION_URL,
-        port: REDIS_CONNECTION_PORT,
-        password: REDIS_PASSWORD,
-    });
-
-    /**
-     * Promisify the get key from redis client in order to return value without using callback approach, making use of async/await.
-     * @static
-     * @field
-     *
-     */
-    static get = promisify(DatabaseCaching.client.get).bind(DatabaseCaching.client);
+    constructor() {
+        this.connectToRedis();
+        this.client = null;
+        this.get = null;
+    }
 
     /**
      * This method confirms connection to RedisDB.
      * @static
      * @method
      */
-    static connectToRedis() {
+    connectToRedis() {
         try {
-            DatabaseCaching.client.on('connect', () => {
-                console.log(`🌀 Redis connected on port ${REDIS_CONNECTION_PORT} 👍`);
+            const client = redis.createClient({
+                host: REDIS_CONNECTION_URL,
+                port: REDIS_CONNECTION_PORT,
+                password: REDIS_PASSWORD,
             });
-            DatabaseCaching.client.on('error', (err) => {
+
+            client.on('connect', () => {
+                console.log(`👍 Redis connected on port ${REDIS_CONNECTION_PORT}`);
+                this.client = client;
+                this.get = promisify(this.client.get).bind(this.client);
+            });
+            client.on('error', (err) => {
                 throw err;
             });
         } catch (e) {
@@ -67,7 +62,15 @@ class DatabaseCaching {
      *
      */
     static insertRecord(field, value, result, serviceName) {
-        DatabaseCaching.client.set(`${serviceName}-${field}-${value}`, JSON.stringify(result));
+        try {
+            this.client.set(`${serviceName}-${field}-${value}`, JSON.stringify(result));
+        } catch (error) {
+            if (NODE_ENV === 'DEVELOPMENT') {
+                console.log(`Redis insertRecord: ${error.message}`);
+            } else {
+                Logger.error(`[Redis insertRecord : ] ${error.message}`);
+            }
+        }
     }
 
     /**
@@ -84,11 +87,11 @@ class DatabaseCaching {
         try {
             const result = await DatabaseCaching.get(`${serviceName}-${field}-${value}`);
             return JSON.parse(result);
-        } catch (e) {
+        } catch (error) {
             if (NODE_ENV === 'DEVELOPMENT') {
-                console.error(`[Redis getRecord]: ${e.message}`);
+                console.log(`Redis getRecord: ${error.message}`);
             } else {
-                Logger.error(`[Redis getRecord] ${e.message}`);
+                Logger.error(`[Redis getRecord : ] ${error.message}`);
             }
         }
     }
@@ -103,8 +106,17 @@ class DatabaseCaching {
      * @param {string} serviceName The name of the service that requires the payload.
      */
     static deleteRecord(field, value, serviceName) {
-        DatabaseCaching.client.del(`${serviceName}-${field}-${value}`);
+        try {
+            this.client.del(`${serviceName}-${field}-${value}`);
+        } catch (error) {
+            if (NODE_ENV === 'DEVELOPMENT') {
+                console.log(`Redis deleteRecord: ${error.message}`);
+            } else {
+                Logger.error(`[Redis deleteRecord: ] ${error.message}`);
+            }
+        }
     }
 }
 
-module.exports = DatabaseCaching;
+const cacheStore = new DatabaseCaching();
+module.exports = cacheStore;

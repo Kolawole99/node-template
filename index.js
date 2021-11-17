@@ -42,9 +42,10 @@ app.use('/', require('./src/routes/_config'));
 
 /** Starting Server */
 app.listen(APP_PORT, () => {
-    if (NODE_ENV === 'DEVELOPMENT') {
+    if (verifyDevelopmentEnvironment) {
         console.log(`🔥 Development Server is running at http://localhost:${APP_PORT}`);
     } else {
         console.log(`😃 ${APP_NAME} is LIVE on port ${APP_PORT}`);
+        Logger.error(`[AppEvent Error] ${error}`);
     }
 });

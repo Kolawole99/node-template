@@ -26,6 +26,10 @@ try {
             request.payload = await sampleService.readRecordById({ request, next });
             next();
         })
+        .get('/filter', async (request, response, next) => {
+            request.payload = await sampleService.readRecordsByFilter({ request, next });
+            next();
+        })
         .get('/search/:keys/:keyword', async (request, response, next) => {
             request.payload = await sampleService.readRecordsByWildcard({ request, next });
             next();
@@ -48,10 +52,10 @@ try {
         });
 } catch (e) {
     const currentRoute = '[Route Error] /sample';
-    if (NODE_ENV !== 'DEVELOPMENT') {
-        Logger.error(`${currentRoute}: ${e.message}`);
-    } else {
+    if (verifyDevelopmentEnvironment) {
         console.log(`${currentRoute}: ${e.message}`);
+    } else {
+        Logger.error(`${currentRoute}: ${e.message}`);
     }
 } finally {
     module.exports = router;

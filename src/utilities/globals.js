@@ -5,6 +5,9 @@
  */
 
 const mongoose = require('mongoose');
+
+const { NODE_ENV } = process.env;
+
 const sendEmail = require('./mailing/sendEmail');
 const Controller = require('../controllers/index');
 const { CustomControllerError, CustomValidationError } = require('./customErrors');
@@ -38,3 +41,9 @@ global.verifyToken = verifyToken;
  * Globalizing sendEmail
  */
 global.sendEmail = sendEmail;
+
+/**
+ * Globalizing application environment verification
+ */
+global.verifyDevelopmentEnvironment = NODE_ENV === 'development' ? true : false;
+global.verifyProductionEnvironment = NODE_ENV === 'production' ? true : false;

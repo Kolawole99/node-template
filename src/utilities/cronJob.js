@@ -12,7 +12,7 @@ function sampleCronJob({ interval, ...otherParameters }) {
             // console.log(otherParameters);
         });
     } catch (e) {
-        NODE_ENV === 'DEVELOPMENT'
+        verifyDevelopmentEnvironment
             ? console.log(`sampleCronJob: ${e.message}`)
             : appEvent.emit('error', e.message);
     }
@@ -25,7 +25,7 @@ function justACronJob({ interval, ...otherParameters }) {
             // console.log(otherParameters);
         });
     } catch (e) {
-        NODE_ENV === 'DEVELOPMENT'
+        verifyDevelopmentEnvironment
             ? console.log(`justACronJob: ${e.message}`)
             : appEvent.emit('error', e.message);
     }

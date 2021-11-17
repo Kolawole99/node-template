@@ -4,8 +4,6 @@
  * @module Controller
  */
 
-const { NODE_ENV } = process.env;
-
 const mongoose = require('mongoose');
 
 /**
@@ -92,7 +90,7 @@ class Controller {
      */
     static processError(error) {
         const message = Controller.mongoErrorMessage({ error }) || error.message;
-        const errorMessage = NODE_ENV === 'DEVELOPMENT' ? `Controller ${message}` : message;
+        const errorMessage = verifyDevelopmentEnvironment ? `Controller ${message}` : message;
         return Controller.jsonize({ failed: true, error: errorMessage });
     }
 

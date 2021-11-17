@@ -1,4 +1,3 @@
-/** */
 const sinon = require('sinon');
 const { expect } = require('chai');
 const RootService = require('../../src/services/_root');
@@ -11,11 +10,11 @@ describe('Tests _root service', () => {
             readRecords: sinon.spy(() => [
                 {
                     id: 1,
-                    _id: 'kjdf;kld',
+                    _id: 'ki_df;kld',
                 },
                 {
                     id: 2,
-                    _id: 'ieuroewksd',
+                    _id: 'scala_euro_ewk',
                 },
             ]),
         };
@@ -40,7 +39,7 @@ describe('Tests _root service', () => {
     });
 
     it('processes single reads', () => {
-        const sampleData = { id: 1, _id: 'sjdfalkdsj' };
+        const sampleData = { id: 1, _id: 'scala_on_+bean' };
         const result = rootService.processSingleRead(sampleData);
         expect(result).to.have.ownProperty('status').to.be.equal(200);
     });
@@ -58,7 +57,7 @@ describe('Tests _root service', () => {
     });
 
     it('process multiple read results for non-empty data', () => {
-        const sampleData = [{ id: 1, _id: 'kdsfjalkdsjfa' }];
+        const sampleData = [{ id: 1, _id: 'just-a_test_string' }];
         const result = rootService.processMultipleReadResults(sampleData);
         expect(result).to.have.property('status').to.be.equal(200);
     });

@@ -46,7 +46,6 @@ class SampleService extends RootService {
 
             const result = await this.sampleController.createRecord({ ...body });
 
-
             if (result.failed) throw new CustomControllerError(result.error);
             DatabaseCaching.insertRecord('id', result.id, result, this.serviceName);
             return this.processSingleRead(result);
@@ -61,6 +60,31 @@ class SampleService extends RootService {
         }
     }
 
+    /**
+     * This method is an implementation to handle the business logic of Reading existing records from the database without filter.
+     * This should be used alongside a GET Request alone.
+     * @async
+     * @method
+     * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
+     * @returns {object<processSingleRead|processedError>}
+     */
+    async readRecords({ next }) {
+        try {
+            const result = await this.sampleController.readRecords({
+                conditions: {},
+            });
+            if (result.failed) throw new CustomControllerError(result.error);
+            return this.processMultipleReadResults(result);
+        } catch (e) {
+            let processedError = this.formatError({
+                service: this.serviceName,
+                error: e,
+                functionName: 'readRecordsByFilter',
+            });
+
+            return next(processedError);
+        }
+    }
     /**
      * This method is an implementation to handle the business logic of Reading an existing records from the database by ID.
      * This should be used alongside a GET Request alone.
@@ -95,23 +119,6 @@ class SampleService extends RootService {
             return next(processedError);
         }
     }
-    async readRecords({ next }) {
-        try {
-            const result = await this.sampleController.readRecords({
-                conditions: {},
-            });
-            if (result.failed) throw new CustomControllerError(result.error);
-            return this.processMultipleReadResults(result);
-        } catch (e) {
-            let processedError = this.formatError({
-                service: this.serviceName,
-                error: e,
-                functionName: 'readRecordsByFilter',
-            });
-
-            return next(processedError);
-        }
-    }
 
     /**
      * This method is an implementation to handle the business logic of Reading existing records from the database by a query filter.
@@ -121,7 +128,6 @@ class SampleService extends RootService {
      * @param {RequestFunctionParameter} {@link RequestFunctionParameter}
      * @returns {object<processSingleRead|processedError>}
      */
-
     async readRecordsByFilter({ request, next }) {
         try {
             const { query } = request;

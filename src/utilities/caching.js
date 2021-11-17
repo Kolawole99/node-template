@@ -4,7 +4,7 @@
  * The unique field is determined based on the definition of the model.
  * @module UTILITY:Caching
  */
-const { NODE_ENV, REDIS_CONNECTION_PORT, REDIS_PASSWORD, REDIS_CONNECTION_URL } = process.env;
+const { REDIS_CONNECTION_PORT, REDIS_PASSWORD, REDIS_CONNECTION_URL } = process.env;
 const { promisify } = require('util');
 const redis = require('redis');
 
@@ -42,7 +42,7 @@ class DatabaseCaching {
                 throw err;
             });
         } catch (e) {
-            if (NODE_ENV === 'DEVELOPMENT') {
+            if (verifyDevelopmentEnvironment) {
                 console.log(`Redis connectToRedis: ${e.message}`);
             } else {
                 Logger.error(`[Redis connectToRedis : ] ${e.message}`);
@@ -65,7 +65,7 @@ class DatabaseCaching {
         try {
             this.client.set(`${serviceName}-${field}-${value}`, JSON.stringify(result));
         } catch (error) {
-            if (NODE_ENV === 'DEVELOPMENT') {
+            if (verifyDevelopmentEnvironment) {
                 console.log(`Redis insertRecord: ${error.message}`);
             } else {
                 Logger.error(`[Redis insertRecord : ] ${error.message}`);
@@ -88,7 +88,7 @@ class DatabaseCaching {
             const result = await DatabaseCaching.get(`${serviceName}-${field}-${value}`);
             return JSON.parse(result);
         } catch (error) {
-            if (NODE_ENV === 'DEVELOPMENT') {
+            if (verifyDevelopmentEnvironment) {
                 console.log(`Redis getRecord: ${error.message}`);
             } else {
                 Logger.error(`[Redis getRecord : ] ${error.message}`);
@@ -109,7 +109,7 @@ class DatabaseCaching {
         try {
             this.client.del(`${serviceName}-${field}-${value}`);
         } catch (error) {
-            if (NODE_ENV === 'DEVELOPMENT') {
+            if (verifyDevelopmentEnvironment) {
                 console.log(`Redis deleteRecord: ${error.message}`);
             } else {
                 Logger.error(`[Redis deleteRecord: ] ${error.message}`);

@@ -3,8 +3,6 @@
  * @module ROUTES:ExternalLogger
  */
 
-const { NODE_ENV } = process.env;
-
 const router = require('express').Router();
 
 const { Logger, retrieveLogs } = require('../utilities/logger');
@@ -15,10 +13,10 @@ try {
     });
 } catch (e) {
     const currentRoute = '[Route Error] /logs';
-    if (NODE_ENV !== 'DEVELOPMENT') {
-        Logger.error(`${currentRoute}: ${e.message}`);
-    } else {
+    if (verifyDevelopmentEnvironment) {
         console.log(`${currentRoute}: ${e.message}`);
+    } else {
+        Logger.error(`${currentRoute}: ${e.message}`);
     }
 } finally {
     module.exports = router;

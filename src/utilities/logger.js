@@ -165,19 +165,14 @@ class Loggers {
                     version,
                     ip,
                     timestamp,
-                    ip,
                     status,
                     runtime: `${runtime} ms`,
                 };
             } else {
                 const [stamp, message] = value.split(' - ');
-
                 let [timestamp, loglevel] = stamp.split(' : ');
-
                 timestamp = timestamp.slice(1, -1);
-
                 loglevel = loglevel.slice(0, -1);
-
                 return { timestamp, loglevel, message };
             }
         };

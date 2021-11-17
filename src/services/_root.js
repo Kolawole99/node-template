@@ -44,10 +44,9 @@ class RootService {
             code = 500;
         }
 
-        const message =
-            process.env.NODE_ENV === 'DEVELOPMENT'
-                ? `[${service}] ${functionName}: ${error.message}`
-                : error.message;
+        const message = verifyDevelopmentEnvironment
+            ? `[${service}] ${functionName}: ${error.message}`
+            : error.message;
 
         return RootService.processFailedResponse({ message, code });
     }

@@ -4,7 +4,7 @@
  * @module Index
  */
 
-const { NODE_ENV, APP_PORT, APP_NAME } = process.env;
+const { APP_PORT, APP_NAME } = process.env;
 
 const expressMongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
@@ -15,7 +15,7 @@ const hpp = require('hpp');
 
 /** Non-global Utilities */
 const { connectToDatabase, loadModels } = require('./src/models/_config');
-const { morganRequestMiddleware } = require('./src/utilities/logger');
+const { morganRequestMiddleware, Logger } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
 require('./src/utilities/caching');
 
@@ -45,7 +45,8 @@ app.listen(APP_PORT, () => {
     if (verifyDevelopmentEnvironment) {
         console.log(`🔥 Development Server is running at http://localhost:${APP_PORT}`);
     } else {
-        console.log(`😃 ${APP_NAME} is LIVE on port ${APP_PORT}`);
-        Logger.error(`[AppEvent Error] ${error}`);
+        const successMessage = `😃 ${APP_NAME} is LIVE on port ${APP_PORT}`;
+        console.log(successMessage);
+        Logger.info(successMessage);
     }
 });

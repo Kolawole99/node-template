@@ -7,7 +7,6 @@
 const RootService = require('../_root');
 const { buildQuery, buildWildcardOptions } = require('../../utilities/query');
 const { createSchema, updateSchema } = require('../../validators/sample');
-const DatabaseCaching = require('../../utilities/caching');
 
 /**
  *
@@ -45,9 +44,8 @@ class SampleService extends RootService {
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
             const result = await this.sampleController.createRecord({ ...body });
-
             if (result.failed) throw new CustomControllerError(result.error);
-            DatabaseCaching.insertRecord('id', result.id, result, this.serviceName);
+
             return this.processSingleRead(result);
         } catch (e) {
             let processedError = this.formatError({
@@ -95,19 +93,14 @@ class SampleService extends RootService {
      */
     async readRecordById({ request, next }) {
         try {
-            const { params } = request;
-            const { id } = params;
+            const { id } = request.params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
-            const cachedResult = await DatabaseCaching.getRecord('id', id, this.serviceName);
-            if (cachedResult) {
-                return this.processSingleRead(cachedResult);
-            }
+
             const [result] = await this.sampleController.readRecords({
                 conditions: { id, isActive: true },
             });
             if (result && result.failed) throw new CustomControllerError(result.error);
-            if (!cachedResult && result)
-                DatabaseCaching.insertRecord('id', result.id, result, this.serviceName);
+
             return this.processSingleRead(result);
         } catch (e) {
             let processedError = this.formatError({
@@ -131,8 +124,9 @@ class SampleService extends RootService {
     async readRecordsByFilter({ request, next }) {
         try {
             const { query } = request;
-            if (Object.keys(query).length === 0)
+            if (Object.keys(query).length === 0) {
                 throw new CustomValidationError('Query is required to filter.');
+            }
 
             const result = await this.handleDatabaseRead({
                 Controller: this.sampleController,
@@ -203,20 +197,21 @@ class SampleService extends RootService {
         try {
             const { params, body } = request;
             const { id } = params;
-            if (!id) throw new CustomValidationError('Invalid ID supplied.');
-
             const { data } = body;
-            if (Object.keys(data).length === 0)
-                throw new CustomValidationError('Update requires a field.');
 
+            if (!id) throw new CustomValidationError('Invalid ID supplied.');
+            if (Object.keys(data).length === 0) {
+                throw new CustomValidationError('Update requires a field.');
+            }
             const { error } = updateSchema.validate(data);
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
+
             const result = await this.sampleController.updateRecords({
                 conditions: { id },
                 data,
             });
             if (result && result.failed) throw new CustomControllerError(result.error);
-            DatabaseCaching.deleteRecord('id', id, this.serviceName);
+
             return this.processUpdateResult({ result });
         } catch (e) {
             let processedError = this.formatError({
@@ -282,7 +277,7 @@ class SampleService extends RootService {
 
             const result = await this.sampleController.deleteRecords({ conditions: { id } });
             if (result.failed) throw new CustomControllerError(result.error);
-            DatabaseCaching.deleteRecord('id', id, this.serviceName);
+
             return this.processDeleteResult(result);
         } catch (e) {
             let processedError = this.formatError({

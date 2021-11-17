@@ -17,7 +17,6 @@ const hpp = require('hpp');
 const { connectToDatabase, loadModels } = require('./src/models/_config');
 const { morganRequestMiddleware, Logger } = require('./src/utilities/logger');
 const { loadEventSystem } = require('./src/events/_loader');
-require('./src/utilities/caching');
 
 const app = express();
 connectToDatabase();

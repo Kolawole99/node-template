@@ -4,9 +4,9 @@
  * @module UTILITY:CustomGlobalization
  */
 
-const mongoose = require('mongoose');
-
 const { NODE_ENV } = process.env;
+
+const mongoose = require('mongoose');
 
 const sendEmail = require('./mailing/sendEmail');
 const Controller = require('../controllers/index');

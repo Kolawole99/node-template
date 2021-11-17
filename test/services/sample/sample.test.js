@@ -1,30 +1,38 @@
+const { NODE_ENV } = process.env;
+
 const sinon = require('sinon');
 const { expect } = require('chai');
 
+const {
+    CustomControllerError,
+    CustomValidationError,
+} = require('../../../src/utilities/customErrors');
 const Controller = require('../../controller/index.test');
 const SampleService = require('../../../src/services/sample/sample');
 const { createSchema, updateSchema } = require('../../../src/validators/sample');
 
 describe('Tests SampleService', () => {
-    let sampleController = null;
     let sampleService = null;
     let next = null;
 
     beforeEach(() => {
-        sampleController = { ...Controller };
+        global.SampleController = { ...Controller };
+        global.CustomControllerError = CustomControllerError;
+        global.CustomValidationError = CustomValidationError;
+        global.verifyDevelopmentEnvironment = NODE_ENV === 'development' ? true : false;
         next = sinon.spy((e) => e);
     });
 
     afterEach(() => {
-        sampleController = null;
+        global.SampleController = null;
         sampleService = null;
         next = null;
     });
 
     describe('SampleService.createRecord', () => {
         it('throws an error when body is empty', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.createRecord({ body: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.createRecord({ request: { body: {} }, next });
             next.called;
         });
 
@@ -34,8 +42,8 @@ describe('Tests SampleService', () => {
             const validationError = { error: { details: [{ message: 'validation error' }] } };
             sinon.stub(createSchema, 'validate').returns(validationError);
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.createRecord({ body }, next);
+            sampleService = new SampleService();
+            await sampleService.createRecord({ request: { body }, next });
             next.called;
             createSchema.validate.restore();
         });
@@ -43,15 +51,15 @@ describe('Tests SampleService', () => {
         it('handles Error from Controller', async () => {
             const body = { id: 2, any: 'String' };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 createRecord: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
             sinon.stub(createSchema, 'validate').returns({});
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.createRecord({ body }, next);
+            sampleService = new SampleService();
+            await sampleService.createRecord({ request: { body }, next });
             next.called;
             createSchema.validate.restore();
         });
@@ -59,15 +67,15 @@ describe('Tests SampleService', () => {
         it('create record for valid data', async () => {
             const body = { id: 1, any: 'String' };
 
-            sampleController = {
-                ...sampleController,
-                createRecord: sinon.spy(() => ({ ...body, id: 1, _id: '1samplecompany2345' })),
+            global.SampleController = {
+                ...SampleController,
+                createRecord: sinon.spy(() => ({ ...body, _id: '1sampleCompany2345' })),
             };
 
             sinon.stub(createSchema, 'validate').returns({});
 
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.createRecord({ body }, next);
+            sampleService = new SampleService();
+            const success = await sampleService.createRecord({ request: { body }, next });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
             createSchema.validate.restore();
         });

@@ -44,7 +44,7 @@ class SampleService extends RootService {
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
             const result = await this.sampleController.createRecord({ ...body });
-            if (result.failed) throw new CustomControllerError(result.error);
+            if (result && result.failed) throw new CustomControllerError(result.error);
 
             return this.processSingleRead(result);
         } catch (e) {
@@ -71,7 +71,8 @@ class SampleService extends RootService {
             const result = await this.sampleController.readRecords({
                 conditions: {},
             });
-            if (result.failed) throw new CustomControllerError(result.error);
+            if (result && result.failed) throw new CustomControllerError(result.error);
+
             return this.processMultipleReadResults(result);
         } catch (e) {
             let processedError = this.formatError({
@@ -96,12 +97,12 @@ class SampleService extends RootService {
             const { id } = request.params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
 
-            const [result] = await this.sampleController.readRecords({
+            const result = await this.sampleController.readRecords({
                 conditions: { id, isActive: true },
             });
             if (result && result.failed) throw new CustomControllerError(result.error);
 
-            return this.processSingleRead(result);
+            return this.processSingleRead(result[0]);
         } catch (e) {
             let processedError = this.formatError({
                 service: this.serviceName,
@@ -132,7 +133,7 @@ class SampleService extends RootService {
                 Controller: this.sampleController,
                 queryOptions: query,
             });
-            if (result.failed) throw new CustomControllerError(result.error);
+            if (result && result.failed) throw new CustomControllerError(result.error);
 
             return this.processMultipleReadResults(result);
         } catch (e) {
@@ -166,12 +167,12 @@ class SampleService extends RootService {
             }
 
             const wildcardConditions = buildWildcardOptions(params.keys, params.keyword);
-            const result = await this.handleDatabaseRead(
-                this.sampleController,
-                query,
-                wildcardConditions
-            );
-            if (result.failed) throw new CustomControllerError(result.error);
+            const result = await this.handleDatabaseRead({
+                Controller: this.sampleController,
+                queryOptions: query,
+                extraOptions: wildcardConditions,
+            });
+            if (result && result.failed) throw new CustomControllerError(result.error);
 
             return this.processMultipleReadResults(result);
         } catch (e) {
@@ -197,18 +198,17 @@ class SampleService extends RootService {
         try {
             const { params, body } = request;
             const { id } = params;
-            const { data } = body;
 
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
-            if (Object.keys(data).length === 0) {
+            if (Object.keys(body).length === 0) {
                 throw new CustomValidationError('Update requires a field.');
             }
-            const { error } = updateSchema.validate(data);
+            const { error } = updateSchema.validate(body);
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
             const result = await this.sampleController.updateRecords({
                 conditions: { id },
-                data,
+                data: body,
             });
             if (result && result.failed) throw new CustomControllerError(result.error);
 
@@ -244,13 +244,13 @@ class SampleService extends RootService {
 
             const { seekConditions } = buildQuery(options);
 
-            const result = await this.sampleController.updateRecords(
-                { ...seekConditions },
-                { ...data }
-            );
-            if (result.failed) throw new CustomControllerError(result.error);
+            const result = await this.sampleController.updateRecords({
+                conditions: { ...seekConditions },
+                data: { ...data },
+            });
+            if (result && result.failed) throw new CustomControllerError(result.error);
 
-            return this.processUpdateResult({ ...data, ...result });
+            return this.processUpdateResult({ result });
         } catch (e) {
             let processedError = this.formatError({
                 service: this.serviceName,
@@ -276,7 +276,7 @@ class SampleService extends RootService {
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
 
             const result = await this.sampleController.deleteRecords({ conditions: { id } });
-            if (result.failed) throw new CustomControllerError(result.error);
+            if (result && result.failed) throw new CustomControllerError(result.error);
 
             return this.processDeleteResult(result);
         } catch (e) {
@@ -307,7 +307,7 @@ class SampleService extends RootService {
             const { seekConditions } = buildQuery(options);
 
             const result = await this.sampleController.deleteRecords({ ...seekConditions });
-            if (result.failed) throw new CustomControllerError(result.error);
+            if (result && result.failed) throw new CustomControllerError(result.error);
 
             return this.processDeleteResult({ ...result });
         } catch (e) {

@@ -81,92 +81,119 @@ describe('Tests SampleService', () => {
         });
     });
 
+    describe('SampleService.readRecords', () => {
+        it('handles Error from Controller', async () => {
+            global.SampleController = {
+                ...SampleController,
+                readRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
+            };
+
+            sampleService = new SampleService();
+            await sampleService.readRecords({ next });
+            next.called;
+        });
+
+        it('get all records', async () => {
+            global.SampleController = {
+                ...SampleController,
+                readRecords: sinon.spy(() => [
+                    { isValued: true, isActive: true },
+                    { isValued: true, isActive: true },
+                ]),
+            };
+
+            sampleService = new SampleService();
+            const success = await sampleService.readRecords({ next });
+            expect(success).to.have.ownProperty('payload').to.not.be.null;
+        });
+    });
+
     describe('SampleService.readRecordById', () => {
         it('throws an error when id is not specified', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordById({ params: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordById({ request: { params: {} }, next });
             next.called;
         });
 
         it('handles Error from Controller', async () => {
             const params = { id: 2 };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 readRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordById({ params }, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordById({ request: { params }, next });
             next.called;
         });
 
         it('get a record for valid id', async () => {
             const params = { id: 2 };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 readRecords: sinon.spy(() => [{ ...params, is_active: true }]),
             };
 
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.readRecordById({ params }, next);
+            sampleService = new SampleService();
+            const success = await sampleService.readRecordById({ request: { params }, next });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
         });
     });
 
     describe('SampleService.readRecordsByFilter', () => {
         it('throws an error when query object is empty', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordsByFilter({ query: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordsByFilter({ request: { query: {} }, next });
             next.called;
         });
 
         it('handles Error from Controller', async () => {
             const query = { id: 'Two Hundred and Seven' };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 readRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordsByFilter({ query }, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordsByFilter({ request: { query }, next });
             next.called;
         });
 
         it('get record for valid query', async () => {
             const query = { id: 'Two Hundred and Seven' };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 readRecords: sinon.spy(() => [{ ...query, is_active: true }]),
             };
 
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.readRecordsByFilter({ query }, next);
+            sampleService = new SampleService();
+            const success = await sampleService.readRecordsByFilter({ request: { query }, next });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
         });
     });
 
     describe('SampleService.readRecordsByWildcard', () => {
         it('throws an error when no query/params', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordsByWildcard({}, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordsByWildcard({ request: {}, next });
             next.called;
         });
 
         it('throws an error when params object is empty', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordsByWildcard({ params: {}, query: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordsByWildcard({ request: { params: {}, query: {} }, next });
             next.called;
         });
 
         it('throws an error when query object is empty', async () => {
             const params = { keys: 'String, Same, Strata', keyword: 'Value' };
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordsByWildcard({ params, query: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordsByWildcard({ request: { params, query: {} }, next });
             next.called;
         });
 
@@ -174,13 +201,13 @@ describe('Tests SampleService', () => {
             const params = { keys: 'String, Same, Strata', keyword: 'Value' };
             const query = { id: 'Two Hundred and Seven' };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 readRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.readRecordsByWildcard({ query, params }, next);
+            sampleService = new SampleService();
+            await sampleService.readRecordsByWildcard({ request: { query, params }, next });
             next.called;
         });
 
@@ -188,27 +215,33 @@ describe('Tests SampleService', () => {
             const params = { keys: 'String, Same, Strata', keyword: 'Value' };
             const query = { id: 'Two Hundred and Seven' };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 readRecords: sinon.spy(() => [{ ...query, is_active: true }]),
             };
 
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.readRecordsByWildcard({ query, params }, next);
+            sampleService = new SampleService();
+            const success = await sampleService.readRecordsByWildcard({
+                request: { query, params },
+                next,
+            });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
         });
     });
 
     describe('SampleService.updateRecordById', () => {
         it('throws an error when param ID is not specified', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecordById({ params: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecordById({ request: { params: {} }, next });
             next.called;
         });
 
         it('throws an error when body is empty', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecordById({ params: { id: 87 }, body: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecordById({
+                request: { params: { id: 87 }, body: {} },
+                next,
+            });
             next.called;
         });
 
@@ -219,8 +252,8 @@ describe('Tests SampleService', () => {
             const validationError = { error: { details: [{ message: 'validation error' }] } };
             sinon.stub(updateSchema, 'validate').returns(validationError);
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecordById({ params, body }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecordById({ request: { params, body }, next });
             next.called;
             updateSchema.validate.restore();
         });
@@ -229,15 +262,15 @@ describe('Tests SampleService', () => {
             const body = { any: 'String' };
             const params = { id: 3 };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 updateRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
             sinon.stub(updateSchema, 'validate').returns({});
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecordById({ params, body }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecordById({ request: { params, body }, next });
             next.called;
             updateSchema.validate.restore();
         });
@@ -246,11 +279,11 @@ describe('Tests SampleService', () => {
             const body = { any: 'String' };
             const params = { id: 3 };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 updateRecords: sinon.spy(() => ({
                     ...body,
-                    id: 1,
+                    ...params,
                     _id: '1samplecompany2345',
                     is_active: true,
                     ok: 1,
@@ -260,8 +293,11 @@ describe('Tests SampleService', () => {
 
             sinon.stub(updateSchema, 'validate').returns({});
 
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.updateRecordById({ params, body }, next);
+            sampleService = new SampleService();
+            const success = await sampleService.updateRecordById({
+                request: { params, body },
+                next,
+            });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
             updateSchema.validate.restore();
         });
@@ -269,119 +305,121 @@ describe('Tests SampleService', () => {
 
     describe('SampleService.updateRecords', () => {
         it('throws an error when options/data does not exist', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecords({ body: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecords({ request: { body: {} }, next });
             next.called;
         });
 
         it('throws an error when options is empty', async () => {
             const body = { options: {}, data: {} };
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecords({ body }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecords({ request: { body }, next });
             next.called;
         });
 
         it('throws an error when data is empty', async () => {
             const body = { options: { any: 'String' }, data: {} };
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecords({ body }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecords({ request: { body }, next });
             next.called;
         });
 
         it('handles Error from Controller', async () => {
             const body = { options: { any: 'String' }, data: { any: 'String' } };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 updateRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.updateRecords({ body }, next);
+            sampleService = new SampleService();
+            await sampleService.updateRecords({ request: { body }, next });
             next.called;
         });
 
         it('updates records', async () => {
             const body = { options: { any: 'String' }, data: { any: 'String' } };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 updateRecords: sinon.spy(() => ({
                     ...body,
                     id: 1,
-                    _id: '1samplecompany2345',
+                    _id: '1sampleCompany2345',
                     is_active: true,
                     ok: 1,
                     nModified: 1,
                 })),
             };
 
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.updateRecords({ body }, next);
+            sampleService = new SampleService();
+            const success = await sampleService.updateRecords({ request: { body }, next });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
         });
     });
 
     describe('SampleService.deleteRecordById', () => {
         it('throws error when id is not specified', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.deleteRecordById({ params: {} }, next);
+            sampleService = new SampleService();
+            await sampleService.deleteRecordById({ request: { params: {} }, next });
             next.called;
         });
 
         it('handles Error from Controller', async () => {
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 deleteRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.deleteRecordById({ params: { id: 2 } }, next);
+            sampleService = new SampleService();
+            await sampleService.deleteRecordById({ request: { params: { id: 2 } }, next });
             next.called;
         });
 
         it('delete a record for valid a id', async () => {
             const params = { id: 2 };
 
-            sampleController = {
-                ...sampleController,
+            global.SampleController = {
+                ...SampleController,
                 deleteRecords: sinon.spy(() => ({ nModified: 1, ok: 1 })),
             };
 
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.deleteRecordById({ params }, next);
+            sampleService = new SampleService();
+            const success = await sampleService.deleteRecordById({ request: { params }, next });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
         });
     });
 
     describe('SampleService.deleteRecords', () => {
         it('throws an error when body options is empty', async () => {
-            sampleService = new SampleService(sampleController);
-            await sampleService.deleteRecords({ body: { options: {} } }, next);
+            sampleService = new SampleService();
+            await sampleService.deleteRecords({ request: { body: { options: {} } }, next });
             next.called;
         });
 
         it('handles Error from Controller', async () => {
-            sampleController = {
-                ...sampleController,
+            const body = { options: { any: 'String' } };
+            global.SampleController = {
+                ...SampleController,
                 deleteRecords: sinon.spy(() => ({ failed: true, error: 'Just a random error' })),
             };
 
-            sampleService = new SampleService(sampleController);
-            await sampleService.deleteRecords({ body: { options: { any: 'String' } } }, next);
+            sampleService = new SampleService();
+            await sampleService.deleteRecords({
+                request: { body },
+                next,
+            });
             next.called;
         });
 
         it('deletes records', async () => {
-            sampleController = {
-                ...sampleController,
+            const body = { options: { any: 'String' } };
+            global.SampleController = {
+                ...SampleController,
                 deleteRecords: sinon.spy(() => ({ ok: 1, nModified: 4, n: 4 })),
             };
-            sampleService = new SampleService(sampleController);
-            const success = await sampleService.deleteRecords(
-                { body: { options: { any: 'String' } } },
-                next
-            );
+            sampleService = new SampleService();
+            const success = await sampleService.deleteRecords({ request: { body }, next });
             expect(success).to.have.ownProperty('payload').to.not.be.null;
         });
     });

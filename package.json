@@ -62,7 +62,8 @@
   },
   "scripts": {
     "dev": "nodemon -r dotenv/config index.js",
-    "test": "nyc --reporter=html mocha --recursive -w -c || true",
+    "test": "nyc mocha --recursive -w -c || true",
+    "test-publish": "nyc --reporter=html mocha --recursive -w -c || true",
     "update-env": "cp .env .env.example",
     "update-documentation": "jsdoc -c jsdoc.json",
     "start": "node -r dotenv/config index.js"

@@ -3,7 +3,7 @@
  * @module MODELS:Config
  */
 
-const { APP_DB_URI } = process.env;
+const { APP_DB_URI, NODE_ENV } = process.env;
 
 const { resolve } = require('path');
 
@@ -29,7 +29,7 @@ function connectToDatabase() {
             },
             (err, data) => {
                 if (err) {
-                    if (NODE_ENV !== 'DEVELOPMENT') {
+                    if (NODE_ENV !== 'development') {
                         Logger.error(`[Database Connection Error] ${err}`);
                     } else {
                         console.log('🔴 Database connection failed.');

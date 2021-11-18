@@ -82,8 +82,8 @@ class Loggers {
             //Remove the undefined in the array after split
             !convertedLogsToArray[convertedLogsToArray.length - 1] && convertedLogsToArray.pop();
 
-            // clean logs from extras and conveert to  array of  json
-            let jsonizedLogs = convertedLogsToArray.map(Loggers.clean(type));
+            // clean logs from extras and convert to  array of  json
+            let formatLogsToJson = convertedLogsToArray.map(Loggers.clean(type));
 
             //filter logs by timestamp
             if (timeFilterRange) {
@@ -95,7 +95,7 @@ class Loggers {
 
                 endDate = endDate ? Loggers.parseDate(endDate) : Loggers.parseDate(new Date());
 
-                jsonizedLogs = jsonizedLogs.filter((value) => {
+                formatLogsToJson = formatLogsToJson.filter((value) => {
                     const time = new Date(value.timestamp);
 
                     return time > startDate && time < endDate;
@@ -104,10 +104,12 @@ class Loggers {
 
             //get range to display
             let range =
-                order == 'Tail' ? [jsonizedLogs.length - length, jsonizedLogs.length] : [0, length];
+                order == 'Tail'
+                    ? [formatLogsToJson.length - length, formatLogsToJson.length]
+                    : [0, length];
 
             //get range of logs to return
-            const selectedLogs = jsonizedLogs.splice(...range);
+            const selectedLogs = formatLogsToJson.splice(...range);
 
             // send json back to the client
             if (file === 'json') {
@@ -116,11 +118,8 @@ class Loggers {
 
             //send strings back to the client
             return selectedLogs.reduce(Loggers.formatString(type), ``);
-        } catch (e) {
-            if (e.errno === -4058) {
-                return `${type}.log is not found`;
-            }
-            return e;
+        } catch (error) {
+            return `Error ${error} in pulling logs.`;
         }
     }
 
@@ -134,9 +133,9 @@ class Loggers {
                     `[${timestamp} GMT ${ip}] ${method} ${route} ${version} | ${status} ${runtime}\n`
                 );
             } else {
-                const { timestamp, loglevel, message } = current;
+                const { timestamp, logLevel, message } = current;
 
-                return previous + `[${timestamp} : ${loglevel}] - ${message}\n`;
+                return previous + `[${timestamp} : ${logLevel}] - ${message}\n`;
             }
         };
     }
@@ -170,10 +169,10 @@ class Loggers {
                 };
             } else {
                 const [stamp, message] = value.split(' - ');
-                let [timestamp, loglevel] = stamp.split(' : ');
+                let [timestamp, logLevel] = stamp.split(' : ');
                 timestamp = timestamp.slice(1, -1);
-                loglevel = loglevel.slice(0, -1);
-                return { timestamp, loglevel, message };
+                logLevel = logLevel.slice(0, -1);
+                return { timestamp, logLevel, message };
             }
         };
     }

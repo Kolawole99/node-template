@@ -52,6 +52,7 @@ The template comes with the following dependencies defined:
 1. Install dependencies.
     * `npm i` or `yarn install`
 2. Create the following environment variables manually or by copying the `.env.example` file to a `.env` file:
+    * To auto generate a .env use: `npm run generate-env` or `yarn generate-env`
     * `NODE_ENV`: specifies the working environment
     * `APP_PORT`: Sets  a default app port.
     * `APP_DB_URI`: Sets  a default Mongo DB connection URI.
@@ -60,11 +61,14 @@ The template comes with the following dependencies defined:
     * `npm run dev` or `yarn dev`
 4. Test application locally and ensure all tests pass with 100% coverage.
     * `npm run test` or `yarn test`
-5. To generate documentation using JSDocs.
-    * `npm run generate-documentation` or `yarn generate-documentation`
-6. Run in a production environment
+    * To generate a web based view of the coverage use: `npm run test-publish` or `yarn test-publish`
+5. To generate an updated .env.example.
+    * `npm run update-example-env` or `yarn update-example-env`
+6. To generate documentation using JSDocs.
+    * `npm run update-documentation` or `yarn update-documentation`
+7. Run in a production environment
     * `npm run start` or `yarn start`
-7. Happy hacking and remain awesome 🤓.
+8. Happy hacking and remain awesome 🤓.
 
 ## LICENSE
 

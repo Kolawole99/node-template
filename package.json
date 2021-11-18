@@ -1,6 +1,6 @@
 {
   "name": "node-template",
-  "version": "2.3.2",
+  "version": "3.0.0",
   "description": "Boilerplate for our node applications. This templates serves as a guide for teams synchronization.",
   "main": "index.js",
   "author": "Oguntuberu Nathan O.",
@@ -64,8 +64,9 @@
     "dev": "nodemon -r dotenv/config index.js",
     "test": "nyc mocha --recursive -w -c || true",
     "test-publish": "nyc --reporter=html mocha --recursive -w -c || true",
-    "update-env": "cp .env .env.example",
+    "update-example-env": "cp .env .env.example",
     "update-documentation": "jsdoc -c jsdoc.json",
+    "generate-env": "cp .env.example .env",
     "start": "node -r dotenv/config index.js"
   }
 }

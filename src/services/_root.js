@@ -124,14 +124,14 @@ class RootService {
         const { count, fieldsToReturn, limit, seekConditions, skip, sortCondition } =
             buildQuery(queryOptions);
 
-        const result = await Controller.readRecords(
-            { ...seekConditions, ...extraOptions },
+        const result = await Controller.readRecords({
+            conditions: { ...seekConditions, ...extraOptions },
             fieldsToReturn,
             sortCondition,
-            count || false,
+            count,
             skip,
-            limit
-        );
+            limit,
+        });
         return result;
     }
 

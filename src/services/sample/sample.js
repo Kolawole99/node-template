@@ -158,13 +158,14 @@ class SampleService extends RootService {
     async readRecordsByWildcard({ request, next }) {
         try {
             const { params, query } = request;
-            if (!params || !query) throw new CustomValidationError('Invalid key/keyword');
             if (Object.keys(params).length === 0) {
                 throw new CustomValidationError('Keys are required to read');
             }
             if (Object.keys(query).length === 0) {
                 throw new CustomValidationError('Keywords are required to read');
             }
+            if (!params.keys || !params.keyword)
+                throw new CustomValidationError('Invalid key/keyword');
 
             const wildcardConditions = buildWildcardOptions(params.keys, params.keyword);
             const result = await this.handleDatabaseRead({

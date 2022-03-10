@@ -9,7 +9,8 @@ const mongoose = require('mongoose');
 /**
  *
  * A very generic Controller class.
- * This handles the integration of services to models and their communication with the database using mongoose.
+ * This handles the integration of services to models and
+ *  their communication with the database using mongoose.
  * @class
  * @param {string} modelName The name of the model as defined in mongoose
  */
@@ -59,19 +60,34 @@ class Controller {
      */
     static mongoErrorMessage({ error }) {
         const { name, code, keyPattern } = error;
-
-        if (name === 'MongoError' && code && code === 11000) {
+        if (name === 'MongoServerError' && code && code === 11000) {
             const keys = Object.keys(keyPattern).join(',');
             return `Entry already exist for ${keys} `;
         } else if (name === 'ValidationError') {
             if (error.errors[Object.keys(error.errors)[0]].properties) {
                 const { type, path } = error.errors[Object.keys(error.errors)[0]].properties;
                 return `Validation failed for field ${path} (${type}) `;
-            } else {
-                const { kind, value, path } = error.errors[Object.keys(error.errors)[0]];
-                return `Validation failed for field ${path} (${value}) instead of ${kind} `;
             }
+            const { kind, value, path } = error.errors[Object.keys(error.errors)[0]];
+            return `Validation failed for field ${path} (${value}) instead of ${kind} `;
         }
+        return 'Validation failed';
+    }
+
+    /**
+     *
+     *
+     * @param {object} name takes the name of the uniqueId created in the globals file for each models
+     * counters collection in lowerCase
+     * @returns {number} an integer representing the document count and serves as id
+     */
+    async getNextSequence(name) {
+        const filter = { _id: name };
+        const update = { $inc: { seq: 1 } };
+        let result = await this.model.findOneAndUpdate(filter, update, {
+            new: true,
+        });
+        return result.seq;
     }
 
     /**
@@ -103,10 +119,9 @@ class Controller {
      * @param {object} data
      * @returns {object|Promise<void>} Either an error object/successfully created document object
      */
-    async createRecord(data) {
+    async createRecord({ data, id }) {
         try {
-            const n = (await this.model.estimatedDocumentCount()) + 1;
-            const recordToCreate = new this.model({ id: n, ...data });
+            const recordToCreate = new this.model({ id, ...data });
             const createdRecord = await recordToCreate.save();
 
             return Controller.jsonize(createdRecord);
@@ -119,8 +134,10 @@ class Controller {
      *
      * @typedef {Object} ReadRecordsParameter
      * @property {object} conditions the parameter the query filters by
-     * @property {object|string} fieldsToReturn extra parameter that determines the fields to return excluding others
-     * @property {object|string} sortOptions specifies ascending or descending sort ( values allowed are asc, desc, ascending,              descending, 1, and -1.)
+     * @property {object|string} fieldsToReturn extra parameter that determines
+     * the fields to return excluding others
+     * @property {object|string} sortOptions specifies ascending or descending sort
+     * ( values allowed are asc, desc, ascending descending, 1, and -1.)
      * @property {boolean} count Determines to either query to count or return documents
      * @property {number} skip Specifies the number of documents to skip.
      * @property {number} limit Specifies the maximum number of documents the query will return.
@@ -207,11 +224,14 @@ class Controller {
 
     /**
      *
-     * Utilizes mongoose updateMany query method which updates all documents that match filter with the update in mongodb.
-     * This changes the isDeleted flag to true and the isActive flag to false in the matching documents instance.
+     * Utilizes mongoose updateMany query method which updates
+     * all documents that match filter with the update in mongodb.
+     * This changes the isDeleted flag to true and the isActive
+     *  flag to false in the matching documents instance.
      * @async
      * @method
-     * @param {object} conditions destructured object parameter used to filter the database to update matching documents
+     * @param {object} conditions destructured object parameter used to
+     * filter the database to update matching documents
      * @returns {object|Promise<void>} Either instance of the mongodb update method response/error
      */
     async deleteRecords({ conditions }) {

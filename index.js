@@ -1,6 +1,7 @@
 /**
  * This serves as the template root file and application entry-point.
- * It declares the required items into the global scope and runs necessary aspects of the codebase as required.
+ * It declares the required items into the global scope and
+ * runs necessary aspects of the codebase as required.
  * @module Index
  */
 

@@ -3,8 +3,6 @@
  * @module ROUTES:Sample
  */
 
-const { NODE_ENV } = process.env;
-
 const router = require('express').Router();
 
 const { Logger } = require('../utilities/logger');

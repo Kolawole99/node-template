@@ -16,27 +16,32 @@ const { SALT, SIGNATURE } = process.env;
  */
 async function hashObject(objectToHash) {
     const salt = await genSalt(Number(SALT));
-    return await hash(objectToHash, salt);
+    const hashedObject = await hash(objectToHash, salt);
+    return hashedObject;
 }
 
 /**
- * Compares two object sentObject (what you want to verify) and the accurateObject (the single source of truth).
+ * Compares two object sentObject (what you want to verify) and the
+ * accurateObject (the single source of truth).
  * Returns a boolean or error.
  * @async
  * @global
  */
 async function verifyObject({ sentObject, accurateObject }) {
-    return await compare(sentObject, accurateObject);
+    const isValid = await compare(sentObject, accurateObject);
+    return isValid;
 }
 
 const signJWT = promisify(sign);
 /**
- * Generates and returns a JWT using the payload and expirationTime, the expirationTime has a default of 6 hours.
+ * Generates and returns a JWT using the payload and expirationTime,
+ * the expirationTime has a default of 6 hours.
  * @async
  * @global
  */
 async function generateToken({ payload, expirationTime = '6h' }) {
-    return await signJWT(payload, SIGNATURE, { expiresIn: expirationTime });
+    const signedToken = await signJWT(payload, SIGNATURE, { expiresIn: expirationTime });
+    return signedToken;
 }
 
 const verifyJWT = promisify(verify);
@@ -46,7 +51,8 @@ const verifyJWT = promisify(verify);
  * @global
  */
 async function verifyToken(tokenToVerify) {
-    return await verifyJWT(tokenToVerify, SIGNATURE);
+    const isValid = await verifyJWT(tokenToVerify, SIGNATURE);
+    return isValid;
 }
 
 module.exports = { hashObject, verifyObject, generateToken, verifyToken };

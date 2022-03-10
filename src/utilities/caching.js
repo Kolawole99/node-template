@@ -11,7 +11,9 @@ const redis = require('redis');
 /**
  *
  * @class
- * @classdesc This is the integration of a caching system using RedisDB(in-memory store) using basic keys such as set, get and del. This can be extended based on use-case, but this class covers the basic operations of caching.
+ * @classdesc This is the integration of a caching system using RedisDB(in-memory store)
+ *  using basic keys such as set, get and del. This can be extended based on use-case,
+ *  but this class covers the basic operations of caching.
  */
 class DatabaseCaching {
     constructor() {
@@ -55,10 +57,13 @@ class DatabaseCaching {
      * The field's value is expected to be unique, to create a quick access of O(1).
      * @static
      * @method
-     * @param {string} field The field's value is expected to be unique, to create a quick access of O(1).
+     * @param {string} field The field's value is expected to be unique,
+     *  to create a quick access of O(1).
      * @param {any} value The field's value which can be any valid JavaScript type.
-     * @param {any} result The payload or object to be stored which is stringified before being saved into RedisDB.
-     * @param {string} serviceName The name of the service that requires the payload and also adds to the uniqueness of the keys.
+     * @param {any} result The payload or object to be stored which
+     * is stringified before being saved into RedisDB.
+     * @param {string} serviceName The name of the service that requires
+     * the payload and also adds to the uniqueness of the keys.
      *
      */
     static insertRecord(field, value, result, serviceName) {

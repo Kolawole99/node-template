@@ -19,9 +19,26 @@ const { hashObject, verifyObject, generateToken, verifyToken } = require('./encr
  *
  */
 const models = mongoose.modelNames();
-for (let i = 0; i < models.length; i++) {
+const recordsToInsert = [];
+for (let i = 0; i < models.length; i+=1) {
     global[models[i] + 'Controller'] = new Controller(models[i]);
+    if (models[i].indexOf('Counter') === -1) {
+        const counterRecords = {
+            _id: `${models[i].toLowerCase()}Id`,
+            sequence: 0,
+        };
+        recordsToInsert.push(counterRecords);
+    }
 }
+
+CounterController.model
+    .insertMany(recordsToInsert, { ordered: false })
+    .then(() => {
+        console.log('Data inserted');
+    })
+    .catch((e) => {
+        Logger.error(`[DB Error: ] ${e.message}`);
+    });
 
 /**
  * Custom Error Object globalization

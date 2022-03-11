@@ -83,11 +83,11 @@ class Controller {
      */
     async getNextSequence(name) {
         const filter = { _id: name };
-        const update = { $inc: { seq: 1 } };
+        const update = { $inc: { sequence: 1 } };
         let result = await this.model.findOneAndUpdate(filter, update, {
             new: true,
         });
-        return result.seq;
+        return result.sequence;
     }
 
     /**

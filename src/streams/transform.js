@@ -6,7 +6,8 @@ const { Transform } = require('stream');
 
 /**
  * This extends the Transform streams implementing a sample code that does a local transform.
- * TODO: You can strip out all the code in this file to implement what you need. These are all placeholders
+ * TODO: You can strip out all the code in this file to
+ * implement what you need. These are all placeholders
  * @class
  */
 class SampleTransformStream extends Transform {

@@ -72,6 +72,10 @@ describe('Tests SampleService', () => {
                 createRecord: sinon.spy(() => ({ ...body, _id: '1sampleCompany2345' })),
             };
 
+            global.CounterController = {
+                getNextSequence: sinon.spy(() => 1),
+            };
+
             sinon.stub(createSchema, 'validate').returns({});
 
             sampleService = new SampleService();
@@ -194,6 +198,15 @@ describe('Tests SampleService', () => {
 
             sampleService = new SampleService();
             await sampleService.readRecordsByWildcard({ request: { params, query: {} }, next });
+            next.called;
+        });
+
+        it('throws an error when params.keys or params.keyword is falsy', async () => {
+            const params = { keys: '', keyword: '' };
+            const query = { id: 'Two Hundred and Seven' };
+
+            sampleService = new SampleService();
+            await sampleService.readRecordsByWildcard({ request: { query, params }, next });
             next.called;
         });
 
@@ -381,7 +394,7 @@ describe('Tests SampleService', () => {
 
             global.SampleController = {
                 ...SampleController,
-                deleteRecords: sinon.spy(() => ({ nModified: 1, ok: 1 })),
+                deleteRecords: sinon.spy(() => ({ acknowledged: true, ok: 1, modifiedCount: 1 })),
             };
 
             sampleService = new SampleService();
@@ -416,7 +429,7 @@ describe('Tests SampleService', () => {
             const body = { options: { any: 'String' } };
             global.SampleController = {
                 ...SampleController,
-                deleteRecords: sinon.spy(() => ({ ok: 1, nModified: 4, n: 4 })),
+                deleteRecords: sinon.spy(() => ({ acknowledged: true, ok: 4, modifiedCount: 4 })),
             };
             sampleService = new SampleService();
             const success = await sampleService.deleteRecords({ request: { body }, next });

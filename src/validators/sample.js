@@ -6,20 +6,11 @@
 const Joi = require('@hapi/joi');
 
 const createSchema = Joi.object({
-    firstName: Joi.string().required().label('First Name'),
-    lastName: Joi.string().required().label('Last Name'),
-    email: Joi.string().email().required().label('Email'),
-    password: Joi.string().min(6).max(16).required().label('Password'),
-    confirmPassword: Joi.any()
-        .equal(Joi.ref('password'))
-        .required()
-        .label('Confirm password')
-        .options({ messages: { 'any.only': '{{#label}} does not match' } }),
+    test: Joi.number().required().label('test'),
 });
 
 const updateSchema = Joi.object({
-    email: Joi.string().email().required().label('Email'),
-    password: Joi.string().min(6).max(16).required().label('Password'),
+    test: Joi.number().required().label('test'),
 });
 
 module.exports = {

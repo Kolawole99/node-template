@@ -6,7 +6,8 @@ const { Readable } = require('stream');
 
 /**
  * This extends the Readable streams
- *  TODO: You can strip out all the code in this file to implement what you need. These are all placeholders
+ *  TODO: You can strip out all the code in this file to
+ * implement what you need. These are all placeholders
  * @class
  */
 class SampleReadableStream extends Readable {

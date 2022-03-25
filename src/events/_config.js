@@ -10,7 +10,8 @@ const { Logger } = require('../utilities/logger');
 
 /**
  *
- * This class extends the NodeJS event emitter class and allows for using custom events in the application.
+ * This class extends the NodeJS event emitter class and allows
+ *  for using custom events in the application.
  * @class
  */
 class AppEvent extends EventEmitter {}

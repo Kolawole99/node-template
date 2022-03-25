@@ -10,7 +10,8 @@ const { createSchema, updateSchema } = require('../../validators/sample');
 
 /**
  *
- * This is the integration of the Sample model routes with the Sample model controller bridging by holding core business logic.
+ * This is the integration of the Sample model routes
+ *  with the Sample model controller bridging by holding core business logic.
  * @class
  */
 class SampleService extends RootService {
@@ -29,7 +30,8 @@ class SampleService extends RootService {
 
     /**
      *
-     * This method is an implementation to handle the business logic of Creating and saving new records into the database.
+     * This method is an implementation to handle the
+     *  business logic of Creating and saving new records into the database.
      * This should be used alongside a POST Request alone.
      * @async
      * @method
@@ -43,12 +45,16 @@ class SampleService extends RootService {
             const { error } = createSchema.validate(body);
             if (error) throw new CustomValidationError(this.filterJOIValidation(error.message));
 
-            const result = await this.sampleController.createRecord({ ...body });
+            const modelName = 'sample';
+            const id = await CounterController.getNextSequence(`${modelName}Id`);
+            const result = await this.sampleController.createRecord({
+                data: body,
+                id,
+            });
             if (result && result.failed) throw new CustomControllerError(result.error);
-
             return this.processSingleRead(result);
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'createRecord',
@@ -59,7 +65,8 @@ class SampleService extends RootService {
     }
 
     /**
-     * This method is an implementation to handle the business logic of Reading existing records from the database without filter.
+     * This method is an implementation to handle the business logic
+     *  of Reading existing records from the database without filter.
      * This should be used alongside a GET Request alone.
      * @async
      * @method
@@ -68,14 +75,13 @@ class SampleService extends RootService {
      */
     async readRecords({ next }) {
         try {
-            const result = await this.sampleController.readRecords({
-                conditions: {},
-            });
+            const filter = { conditions: {} };
+            const result = await this.sampleController.readRecords(filter);
             if (result && result.failed) throw new CustomControllerError(result.error);
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'readRecordsByFilter',
@@ -84,8 +90,10 @@ class SampleService extends RootService {
             return next(processedError);
         }
     }
+
     /**
-     * This method is an implementation to handle the business logic of Reading an existing records from the database by ID.
+     * This method is an implementation to handle the business logic
+     * of Reading an existing records from the database by ID.
      * This should be used alongside a GET Request alone.
      * @async
      * @method
@@ -96,15 +104,13 @@ class SampleService extends RootService {
         try {
             const { id } = request.params;
             if (!id) throw new CustomValidationError('Invalid ID supplied.');
-
-            const result = await this.sampleController.readRecords({
-                conditions: { id, isActive: true },
-            });
+            const filter = { conditions: { id, isActive: true } };
+            const result = await this.sampleController.readRecords(filter);
             if (result && result.failed) throw new CustomControllerError(result.error);
 
             return this.processSingleRead(result[0]);
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'readRecordById',
@@ -115,7 +121,8 @@ class SampleService extends RootService {
     }
 
     /**
-     * This method is an implementation to handle the business logic of Reading existing records from the database by a query filter.
+     * This method is an implementation to handle the business logic
+     * of Reading existing records from the database by a query filter.
      * This should be used alongside a GET Request alone.
      * @async
      * @method
@@ -137,7 +144,7 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'readRecordsByFilter',
@@ -148,7 +155,8 @@ class SampleService extends RootService {
     }
 
     /**
-     * This method is an implementation to handle the business logic of Reading existing records from the database by a wildcard query built using the Query utility.
+     * This method is an implementation to handle the business logic of
+     * Reading existing records from the database by a wildcard query built using the Query utility.
      * This should be used alongside a GET Request alone.
      * @async
      * @method
@@ -164,9 +172,9 @@ class SampleService extends RootService {
             if (Object.keys(query).length === 0) {
                 throw new CustomValidationError('Keywords are required to read');
             }
-            if (!params.keys || !params.keyword)
+            if (!params.keys || !params.keyword) {
                 throw new CustomValidationError('Invalid key/keyword');
-
+            }
             const wildcardConditions = buildWildcardOptions(params.keys, params.keyword);
             const result = await this.handleDatabaseRead({
                 Controller: this.sampleController,
@@ -177,7 +185,7 @@ class SampleService extends RootService {
 
             return this.processMultipleReadResults(result);
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'readRecordsByWildcard',
@@ -187,7 +195,8 @@ class SampleService extends RootService {
         }
     }
     /**
-     * This method is an implementation to handle the business logic of updating an existing records by ID.
+     * This method is an implementation to handle the business
+     * logic of updating an existing records by ID.
      * This should be used alongside a PUT Request alone.
      * @async
      * @method
@@ -215,7 +224,7 @@ class SampleService extends RootService {
 
             return this.processUpdateResult({ result });
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'updateRecordById',
@@ -226,7 +235,8 @@ class SampleService extends RootService {
     }
 
     /**
-     * This method is an implementation to handle the business logic of updating multiple existing records.
+     * This method is an implementation to handle the business logic of
+     * updating multiple existing records.
      * This should be used alongside a PUT Request alone.
      * @async
      * @method
@@ -240,8 +250,9 @@ class SampleService extends RootService {
             if (Object.keys(options).length === 0) {
                 throw new CustomValidationError('Options are required to update');
             }
-            if (Object.keys(data).length === 0)
+            if (Object.keys(data).length === 0) {
                 throw new CustomValidationError('Data is required to update');
+            }
 
             const { seekConditions } = buildQuery(options);
 
@@ -253,7 +264,7 @@ class SampleService extends RootService {
 
             return this.processUpdateResult({ result });
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'updateRecords',
@@ -264,7 +275,8 @@ class SampleService extends RootService {
     }
 
     /**
-     * This method is an implementation to handle the business logic of deleting an existing records by ID.
+     * This method is an implementation to handle the business logic
+     * of deleting an existing records by ID.
      * This should be used alongside a DELETE Request alone.
      * @async
      * @method
@@ -281,7 +293,7 @@ class SampleService extends RootService {
 
             return this.processDeleteResult(result);
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'deleteRecordById',
@@ -292,7 +304,8 @@ class SampleService extends RootService {
     }
 
     /**
-     * This method is an implementation to handle the business logic of deleting multiple existing records.
+     * This method is an implementation to handle
+     *  the business logic of deleting multiple existing records.
      * This should be used alongside a DELETE Request alone.
      * @async
      * @method
@@ -302,9 +315,9 @@ class SampleService extends RootService {
     async deleteRecords({ request, next }) {
         try {
             const { options } = request.body;
-            if (Object.keys(options).length === 0)
+            if (Object.keys(options).length === 0) {
                 throw new CustomValidationError('Options are required');
-
+            }
             const { seekConditions } = buildQuery(options);
 
             const result = await this.sampleController.deleteRecords({ ...seekConditions });
@@ -312,7 +325,7 @@ class SampleService extends RootService {
 
             return this.processDeleteResult({ ...result });
         } catch (e) {
-            let processedError = this.formatError({
+            const processedError = this.formatError({
                 service: this.serviceName,
                 error: e,
                 functionName: 'deleteRecords',

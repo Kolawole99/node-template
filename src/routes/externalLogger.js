@@ -8,7 +8,7 @@ const router = require('express').Router();
 const { Logger, retrieveLogs } = require('../utilities/logger');
 
 try {
-    router.get('/', async (request, response, next) => {
+    router.get('/', async (request, response) => {
         response.send(await retrieveLogs(request.query));
     });
 } catch (e) {

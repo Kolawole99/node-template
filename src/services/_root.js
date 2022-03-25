@@ -15,7 +15,8 @@ class RootService {
      *
      * Removes all JOI Validator decoration from Error messages
      * @method
-     * @param {string} message The error.message string thrown from JOI Validation when a property does not match the specification.
+     * @param {string} message The error.message string thrown from
+     * JOI Validation when a property does not match the specification.
      * @returns {string} Formatted version of JOI message string.
      */
     filterJOIValidation(message) {
@@ -31,7 +32,8 @@ class RootService {
      */
     /**
      *
-     * These function handles setting the error codes and cleaning up error messages based on the process environment
+     * These function handles setting the error codes and cleaning
+     * up error messages based on the process environment
      * @method
      * @param {FormatErrorParameter} destructuredObject
      * @returns {object} This contains errorMessage and statusCode
@@ -43,11 +45,9 @@ class RootService {
         } else if (error instanceof CustomControllerError) {
             code = 500;
         }
-
         const message = verifyDevelopmentEnvironment
             ? `[${service}] ${functionName}: ${error.message}`
             : error.message;
-
         return this.processFailedResponse({ message, code });
     }
 
@@ -62,7 +62,8 @@ class RootService {
      *
      * This methods is used to format all Failed responses and is called internally only
      * @method
-     * @param {ProcessFailedResponseParameter} destructuredObject The instance of the defined param object.
+     * @param {ProcessFailedResponseParameter} destructuredObject The instance of the
+     * defined param object.
      * @returns {object} This always has error set to a string and payload to null.
      */
     processFailedResponse({ message, code = 400 }) {
@@ -86,7 +87,8 @@ class RootService {
      *
      * This methods is used to format all successful responses and is called internally only
      * @method
-     * @param {ProcessSuccessfulResponseParameter} destructuredObject The instance of the defined param object
+     * @param {ProcessSuccessfulResponseParameter} destructuredObject The instance of the defined
+     * param object
      * @returns {object} This always has error set to null and payload an object.
      */
     processSuccessfulResponse({
@@ -114,10 +116,12 @@ class RootService {
 
     /**
      *
-     * This methods is used to query the database to read items from the database by a generated query
+     * This methods is used to query the database to read items from
+     * the database by a generated query
      * @method
      * @async
-     * @param {HandleDatabaseReadParameter} destructuredObject The instance of the defined param object
+     * @param {HandleDatabaseReadParameter} destructuredObject The instance of the
+     * defined param object
      * @returns An the response from the Controller
      */
     async handleDatabaseRead({ Controller, queryOptions, extraOptions = {} }) {
@@ -185,6 +189,9 @@ class RootService {
         if (result && result.ok && !result.nModified) {
             return this.processSuccessfulResponse({ payload: result, code: 204 });
         }
+        if (result && result.acknowledged && result.modifiedCount) {
+            return this.processSuccessfulResponse({ payload: result });
+        }
         return this.processFailedResponse({ message: 'Update failed', code: 400 });
     }
 
@@ -196,7 +203,8 @@ class RootService {
      * @returns An instance of SuccessfulResponse/FailedResponse
      */
     processDeleteResult(result) {
-        if (result && result.nModified) return this.processSuccessfulResponse({ payload: result });
+        if (result && result.acknowledged && result.modifiedCount)
+            return this.processSuccessfulResponse({ payload: result });
         return this.processFailedResponse({ message: 'Deletion failed.', code: 400 });
     }
 }

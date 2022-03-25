@@ -85,6 +85,15 @@ describe('Tests _root service', () => {
         expect(result).to.have.property('error').to.be.null;
     });
 
+    it('returns valid response for updated data in updated mongoose package', () => {
+        const sampleData = { acknowledged:true, modifiedCount: 1 };
+        const result = rootService.processUpdateResult({
+            result: sampleData,
+            eventName: 'sampleEventName',
+        });
+        expect(result).to.have.property('error').to.be.null;
+    });
+
     it('just using this to fire the Logger error event for testing', () => {
         const sampleData = { ok: 1, nModified: 1 };
         const result = rootService.processUpdateResult({ result: sampleData, eventName: 'error' });
@@ -92,7 +101,7 @@ describe('Tests _root service', () => {
     });
 
     it('returns valid response for successful delete', () => {
-        const sampleData = { ok: 1, nModified: 1 };
+        const sampleData = { acknowledged:true, ok: 1, modifiedCount: 1 };
         const result = rootService.processDeleteResult(sampleData);
         expect(result).to.have.property('error').to.be.null;
     });

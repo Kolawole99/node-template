@@ -25,7 +25,6 @@ function connectToDatabase() {
                 autoIndex: true,
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
-                useCreateIndex: true,
             },
             (err, data) => {
                 if (err) {

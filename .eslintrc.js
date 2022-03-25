@@ -12,12 +12,18 @@ const rules = {
     globals: {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
+        SampleController: 'readonly',
+        CustomValidationError: 'readonly',
+        CustomControllerError: 'readonly',
+        verifyDevelopmentEnvironment: 'readonly',
     },
     parserOptions: { ecmaVersion: 2018 },
     rules: {
         'prettier/prettier': 'error',
         indent: [2, 4],
         'no-console': 'off',
+        'no-unneeded-ternary': ['error', { defaultAssignment: true }],
+        'no-else-return': ['error', { allowElseIf: true }],
         'class-methods-use-this': [
             'error',
             {
@@ -30,9 +36,11 @@ const rules = {
                     'processUpdateResult',
                     'processDeleteResult',
                     'validateEmail',
+                    'filterJOIValidation',
                 ],
             },
         ],
+        'newline-per-chained-call': 'off',
         'object-curly-newline': [
             'error',
             {
@@ -60,7 +68,7 @@ const rules = {
             },
         ],
         'no-underscore-dangle': ['error', { allow: ['_id', '_v'] }],
-        'operator-linebreak': ['error', 'after'],
+        'operator-linebreak': ['error', 'before'],
         'no-param-reassign': ['error', { props: false }],
     },
 };
